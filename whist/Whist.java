@@ -5,8 +5,14 @@ import ch.aplu.jgamegrid.*;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import java.util.Properties;
+
 
 @SuppressWarnings("serial")
 public class Whist extends CardGame {
@@ -50,9 +56,8 @@ public class Whist extends CardGame {
   }
 	 
   private final String version = "1.0";
-  public final int nbPlayers = 4;
+ 
   public final int nbStartCards = 13;
-  public final int winningScore = 11;
   private final int handWidth = 400;
   private final int trickWidth = 40;
   private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
@@ -71,10 +76,14 @@ public class Whist extends CardGame {
   private Actor[] scoreActors = {null, null, null, null };
   private final Location trickLocation = new Location(350, 350);
   private final Location textLocation = new Location(350, 450);
-  private final int thinkingTime = 2000;
   private Hand[] hands;
   private Location hideLocation = new Location(-500, - 500);
   private Location trumpsActorLocation = new Location(50, 50);
+  
+  /*Game properties*/
+  public final int nbPlayers = 4;
+  public final int winningScore = 11;
+  private final int thinkingTime = 2000;
   private boolean enforceRules=false;
 
   public void setStatus(String string) { setStatusText(string); }
@@ -82,6 +91,9 @@ public class Whist extends CardGame {
 private int[] scores = new int[nbPlayers];
 
 Font bigFont = new Font("Serif", Font.BOLD, 36);
+
+
+Properties whistProperties;
 
 private void initScore() {
 	 for (int i = 0; i < nbPlayers; i++) {
@@ -215,9 +227,74 @@ private Optional<Integer> playRound() {  // Returns winner, if any
 	return Optional.empty();
 }
 
+
+/* This method initializes the game with default (original) properties
+ * Ensures basic properties are loaded irrespective or properties file
+ *  */
+private void initialiseProperties() {
+	
+	whistProperties.setProperty("InteractivePlayer", "0");
+	whistProperties.setProperty("RandomNpc", "3");
+	whistProperties.setProperty("WinningScore", "11");
+	whistProperties.setProperty("ThinkingTime", "2000");
+	whistProperties.setProperty("EnforceRules", "false");
+	
+	try {
+		readProperties();
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+
+}
+private void readProperties() throws FileNotFoundException, IOException  {
+	// Read properties 
+	FileReader inStream = null;
+	
+	inStream = new FileReader("original.properties");
+	whistProperties.load(inStream);
+
+	if (inStream != null) {
+		inStream.close();
+	}
+}
+private void loadProperties() {	
+	/*for(Map.Entry<Object, Object> entry : whistProperties.entrySet()) {
+		System.out.println(entry.getKey().toString() + " : " + entry.getValue().toString()); 
+	}
+	*/
+	/*
+	System.out.println("Orignal hardcoded properties:-");
+	System.out.println("nbPlayers    : " +  nbPlayers);
+	System.out.println("winningScore : " +  winningScore);
+	System.out.println("thinkingTime : " +  thinkingTime);
+	System.out.println("enforceRules : " +  enforceRules);
+	*/
+	int humanPlayer = Integer.parseInt(whistProperties.getProperty("RandomNpc")) + 1 ; 
+	int nbPlayers2 = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + humanPlayer;
+	int winningScore2 = Integer.parseInt(whistProperties.getProperty("WinningScore"));
+	int thinkingTime2 = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
+	boolean enforceRules2 = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
+	
+	
+	System.out.println("File read properties:-");
+	System.out.println("nbPlayers    : " +  nbPlayers2);
+	System.out.println("winningScore : " +  winningScore2);
+	System.out.println("thinkingTime : " +  thinkingTime2);
+	System.out.println("enforceRules : " +  enforceRules2);
+	
+
+}
   public Whist()
   {
-    super(700, 700, 30);
+	 super(700, 700, 30);
+
+	 whistProperties = new Properties();
+	 initialiseProperties();
+	 loadProperties();
+	  
+	
     setTitle("Whist (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
     setStatusText("Initializing...");
     initScore();
@@ -229,6 +306,7 @@ private Optional<Integer> playRound() {  // Returns winner, if any
     addActor(new Actor("sprites/gameover.gif"), textLocation);
     setStatusText("Game over. Winner is player: " + winner.get());
     refresh();
+    s
   }
 
   public static void main(String[] args)
