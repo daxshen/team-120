@@ -306,7 +306,7 @@ private void loadProperties() {
     addActor(new Actor("sprites/gameover.gif"), textLocation);
     setStatusText("Game over. Winner is player: " + winner.get());
     refresh();
-    s
+
   }
 
   public static void main(String[] args)
