@@ -61,6 +61,7 @@ public class Whist extends CardGame {
   private final int handWidth = 400;
   private final int trickWidth = 40;
   private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
+  
   private final Location[] handLocations = {
 			  new Location(350, 625),
 			  new Location(75, 350),
@@ -81,9 +82,9 @@ public class Whist extends CardGame {
   private Location trumpsActorLocation = new Location(50, 50);
   
   /*Game properties*/
-  public int nbPlayers = 4;
-  public int winningScore = 11;
-  private int thinkingTime = 2000;
+  public final int nbPlayers = 4;
+  public final int winningScore = 11;
+  private final int thinkingTime = 2000;
   private boolean enforceRules=false;
 
   public void setStatus(String string) { setStatusText(string); }
@@ -252,7 +253,7 @@ private void readProperties() throws FileNotFoundException, IOException  {
 	// Read properties 
 	FileReader inStream = null;
 	
-	inStream = new FileReader("debug.properties");
+	inStream = new FileReader("original.properties");
 	whistProperties.load(inStream);
 
 	if (inStream != null) {
@@ -272,17 +273,17 @@ private void loadProperties() {
 	System.out.println("enforceRules : " +  enforceRules);
 	*/
 	int humanPlayer = Integer.parseInt(whistProperties.getProperty("RandomNpc")) + 1 ; 
-	nbPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + humanPlayer;
-	winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
-	thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
-	enforceRules = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
+	int nbPlayers2 = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + humanPlayer;
+	int winningScore2 = Integer.parseInt(whistProperties.getProperty("WinningScore"));
+	int thinkingTime2 = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
+	boolean enforceRules2 = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
 	
 	
 	System.out.println("File read properties:-");
-	System.out.println("nbPlayers    : " +  nbPlayers);
-	System.out.println("winningScore : " +  winningScore);
-	System.out.println("thinkingTime : " +  thinkingTime);
-	System.out.println("enforceRules : " +  enforceRules);
+	System.out.println("nbPlayers    : " +  nbPlayers2);
+	System.out.println("winningScore : " +  winningScore2);
+	System.out.println("thinkingTime : " +  thinkingTime2);
+	System.out.println("enforceRules : " +  enforceRules2);
 	
 
 }
