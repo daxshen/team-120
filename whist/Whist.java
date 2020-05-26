@@ -82,9 +82,9 @@ public class Whist extends CardGame {
   private Location trumpsActorLocation = new Location(50, 50);
   
   /*Game properties*/
-  public final int nbPlayers = 4;
-  public final int winningScore = 11;
-  private final int thinkingTime = 2000;
+  public int nbPlayers = 4;
+  public int winningScore = 11;
+  private int thinkingTime = 2000;
   private boolean enforceRules=false;
 
   public void setStatus(String string) { setStatusText(string); }
@@ -253,7 +253,7 @@ private void readProperties() throws FileNotFoundException, IOException  {
 	// Read properties 
 	FileReader inStream = null;
 	
-	inStream = new FileReader("original.properties");
+	inStream = new FileReader("debug.properties");
 	whistProperties.load(inStream);
 
 	if (inStream != null) {
@@ -273,16 +273,16 @@ private void loadProperties() {
 	System.out.println("enforceRules : " +  enforceRules);
 	*/
 	int humanPlayer = Integer.parseInt(whistProperties.getProperty("RandomNpc")) + 1 ; 
-	int nbPlayers2 = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + humanPlayer;
-	int winningScore2 = Integer.parseInt(whistProperties.getProperty("WinningScore"));
-	int thinkingTime2 = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
+	nbPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + humanPlayer;
+	winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
+	thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
 	boolean enforceRules2 = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
 	
 	
 	System.out.println("File read properties:-");
-	System.out.println("nbPlayers    : " +  nbPlayers2);
-	System.out.println("winningScore : " +  winningScore2);
-	System.out.println("thinkingTime : " +  thinkingTime2);
+	System.out.println("nbPlayers    : " +  nbPlayers);
+	System.out.println("winningScore : " +  winningScore);
+	System.out.println("thinkingTime : " +  thinkingTime);
 	System.out.println("enforceRules : " +  enforceRules2);
 	
 
