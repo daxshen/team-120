@@ -252,7 +252,7 @@ private void readProperties() throws FileNotFoundException, IOException  {
 	// Read properties 
 	FileReader inStream = null;
 	
-	inStream = new FileReader("original.properties");
+	inStream = new FileReader("debug.properties");
 	whistProperties.load(inStream);
 
 	if (inStream != null) {
