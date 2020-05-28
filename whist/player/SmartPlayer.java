@@ -2,11 +2,10 @@ package player;
 
 import ch.aplu.jcardgame.Hand;
 
-public class SmartPlayer extends Player {
+public class SmartPlayer extends ComputerPlayer {
 
-	public SmartPlayer(Hand hand) {
-		super(hand);
-		// TODO Auto-generated constructor stub
+	public SmartPlayer(int id, Hand hand, int thinkingTime) {
+		super(id, hand, thinkingTime);
 	}
 
 }
