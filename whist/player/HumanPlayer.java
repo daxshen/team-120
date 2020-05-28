@@ -6,7 +6,22 @@ import ch.aplu.jcardgame.CardListener;
 import ch.aplu.jcardgame.Hand;
 
 public class HumanPlayer extends Player {
+	//------------------- Attributes -------------------------------
 
+	//------------------- Getters & Setters ------------------------
+	@Override
+	public void setHand(Hand hand) {
+		super.setHand(hand);
+		CardListener cardListener = new CardAdapter() 
+		{
+			public void leftDoubleClicked(Card card) {
+				selectedCard = card;
+			}
+		};
+		this.hand.addCardListener(cardListener);
+	}
+	
+	//------------------- Constructors -----------------------------
 	public HumanPlayer(int id, Hand hand, int thinkingTime) {
 		super(id, hand, thinkingTime);
 		this.thinkingTime = 0;
@@ -22,8 +37,9 @@ public class HumanPlayer extends Player {
 		this.hand.addCardListener(cardListener);
 	}
 	
-	//------------------- Methods ------------------------
+	//------------------- Methods ----------------------------------
 	//TODO comment
+	@Override
 	public Card playCard() {
 		hand.setTouchEnabled(true);
 		return super.playCard();
