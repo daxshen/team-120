@@ -153,7 +153,6 @@ public class Round implements Subject {
 
 	public Optional<Integer> playRound() {
 		Integer roundWinner = null;
-		trick = new Hand(deck);
 
 		// Choosing a random lead player on the first round
 		activePlayer = players.get(0);
@@ -166,6 +165,7 @@ public class Round implements Subject {
 			players = shiftArray(players, players.indexOf(activePlayer));
 			Whist.Suit lead = null;
 			trickWinner = null;
+			trick = new Hand(deck);
 
 			// Each player plays a card
 			for (Player player : players) {
@@ -200,7 +200,6 @@ public class Round implements Subject {
 			if (trickWinner != null) {
 				activePlayer = trickWinner;
 				trickWinner.setScore(trickWinner.getScore() + 1);
-				trick.removeAll(true);
 				notifyObserver();
 
 				// End game if winner is born
@@ -211,6 +210,7 @@ public class Round implements Subject {
 			}
 		}
 		dealCards();
+		trump = Whist.randomEnum(Whist.Suit.class);
 		return Optional.empty();
 	}
 
