@@ -28,13 +28,13 @@ public class HumanPlayer extends Player {
 		this.message = "Player " + id + " double-click on card to lead.";
 		
 		//Add listener to human player hand
-		CardListener cardListener = new CardAdapter() 
+/*		CardListener cardListener = new CardAdapter() 
 		{
 			public void leftDoubleClicked(Card card) {
 				selectedCard = card;
 			}
 		};
-		this.hand.addCardListener(cardListener);
+		this.hand.addCardListener(cardListener);*/
 	}
 	
 	//------------------- Methods ----------------------------------

@@ -78,18 +78,16 @@ public class Whist extends CardGame implements Observer {
 	public int winningScore = 11;
 	private int thinkingTime = 2000;
 	private boolean enforceRules = false;
-	
+
 	public void setStatus(String string) {
 		setStatusText(string);
 	}
-
 
 	Font bigFont = new Font("Serif", Font.BOLD, 36);
 
 	private Properties whistProperties;
 
 	private Round round = null;
-	
 
 	/*
 	 * This method initializes the game with default (original) properties Ensures
@@ -144,100 +142,104 @@ public class Whist extends CardGame implements Observer {
 
 	}
 
-	//Initialize graphics
+	// Initialize graphics
 	private void initGraphics() {
-		
+
 		setTitle("THIS IS A TEST2");
 		setStatusText("Initializing...");
-	
-		//initialize sprites
-		RowLayout[] layouts = new RowLayout[round.getPlayers().size()];
+
+		// initialize sprites
 		for (int i = 0; i < round.getPlayers().size(); i++) {
 			Player player = round.getPlayers().get(i);
-			
-			//Score sprites
+
+			// Score sprites
 			scoreActors[player.getId()] = new TextActor("0", Color.WHITE, bgColor, bigFont);
 			addActor(scoreActors[player.getId()], scoreLocations[player.getId()]);
-			
-			//Hands sprites
-			layouts[player.getId()] = new RowLayout(handLocations[player.getId()], handWidth);
-			layouts[player.getId()].setRotationAngle(90 * i);
-			player.getHand().setView(this, layouts[i]);
-			player.getHand().setTargetArea(new TargetArea(trickLocation));
-			player.getHand().draw();
 		}
-		
-		//Trump sprites
+
+		// Trump sprites
 		final Actor trumpsActor = new Actor("sprites/" + trumpImage[round.getTrump().ordinal()]);
 		addActor(trumpsActor, trumpsActorLocation);
 	}
-	
 
-	//Update graphics based on gameplay
+	// Update graphics based on gameplay
 	private void updateGraphics() {
 		updateScoreGraphics();
 		updateText();
 		updateHandGraphics();
 	}
-	
-	//TODO Comment
-	private void updateScoreGraphics() {			
-		for (int i = 0; i < round.getPlayers().size(); i ++) {
-			//Update score sprites
-			Player player  = round.getPlayers().get(i);
-			removeActor(scoreActors[player.getId()]);
-			scoreActors[player.getId()] = new TextActor(String.valueOf(player.getScore()), Color.WHITE, bgColor, bigFont);
-			addActor(scoreActors[player.getId()], scoreLocations[player.getId()]);			
+
+	// TODO Comment
+	private void updateScoreGraphics() {
+		for (int i = 0; i < round.getPlayers().size(); i++) {
+			// Update score sprites
+			removeActor(scoreActors[round.getPlayerId(i)]);
+			scoreActors[round.getPlayerId(i)] = new TextActor(String.valueOf(round.getPlayerScore(i)), Color.WHITE,
+					bgColor, bigFont);
+			addActor(scoreActors[round.getPlayerId(i)], scoreLocations[round.getPlayerId(i)]);
 		}
 	}
-	
-	//TODO Comment
+
+	// TODO Comment
 	private void updateHandGraphics() {
+
+		//Player hand card sprites
+		for (int i = 0; i < round.getPlayers().size(); i ++)
+		{
+			RowLayout[] layouts = new RowLayout[round.getPlayers().size()];
+			layouts[round.getPlayerId(i)] = new RowLayout(handLocations[round.getPlayerId(i)], handWidth);
+			layouts[round.getPlayerId(i)].setRotationAngle(90 * i);
+			round.getPlayerHand(i).setView(this, layouts[i]);
+			round.getPlayerHand(i).setTargetArea(new TargetArea(trickLocation));
+			round.getPlayerHand(i).draw();	
+		}
+		
+		//Trick desktop card sprites
 		if (round.getWinner() != null)
 			round.getTrick().setView(this, new RowLayout(hideLocation, 0));
 		else
 			round.getTrick().setView(this, new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
 		round.getTrick().draw();
 		round.getTrick().setVerso(false);
+		
 	}
-	
-	//TODO Comment
+
+	// TODO Comment
 	private void updateText() {
 		if (round.getWinner() != null) {
 			setStatusText("Player " + round.getWinner().getId() + " wins trick.");
-			delay(600);		
-		}
-		else {
+			delay(600);
+		} else {
 			setStatusText(round.getNextPlayer().getMessage());
 			delay(round.getNextPlayer().getThinkingTime());
 		}
 	}
-	
+
 	public Whist() {
 		super(700, 700, 30);
 
 		initialiseProperties();
-		
+
 		round = new Round(deck, nbPlayers, thinkingTime, nbStartCards, winningScore);
-		round.addObserver((observer.Observer)this); //Register as an observer to update graphics
+		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
 		initGraphics();
-		//Optional<Player> winner;
-		Player winner = null;
+		// Optional<Player> winner;
+		Optional<Integer> winner;
 		do {
 			winner = round.playRound();
-		} while (winner == null);
+		} while (!winner.isPresent());
 		addActor(new Actor("sprites/gameover.gif"), textLocation);
-		setStatusText("Game over. Winner is player: " + winner.getId());
+		setStatusText("Game over. Winner is player: " + winner);
 		refresh();
 
 	}
-	
+
 	public static void main(String[] args) {
 		// System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		new Whist();
 	}
 
-	//Observer pattern
+	// Observer pattern
 	@Override
 	public void update() {
 		updateGraphics();

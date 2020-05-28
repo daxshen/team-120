@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Optional;
+
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import ch.aplu.jcardgame.Hand;
@@ -83,6 +85,18 @@ public class Round implements Subject {
 		return players;
 	}
 
+	public int getPlayerId(int index) {
+		return players.get(index).getId();
+	}
+	
+	public int getPlayerScore(int index) {
+		return players.get(index).getScore();
+	}
+	
+	public Hand getPlayerHand(int index) {
+		return players.get(index).getHand();
+	}
+	
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
@@ -101,27 +115,33 @@ public class Round implements Subject {
 
 	// ------------------- Methods --------------------------
 	private void initPlayers(int playerThinkingTime) {
-		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
+		//Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
 																	// ignored
 		for (int i = 0; i < numPlayers; i++) {
 			// TODO specify player type according to id
 			Player player = null;
-			if (i == 0)
-				player = new HumanPlayer(i, hands[i], playerThinkingTime);
-			else
-				player = new ComputerPlayer(i, hands[i], playerThinkingTime);
+			if (i == 0) player = new HumanPlayer(i, null, playerThinkingTime);else
+				player = new ComputerPlayer(i, null, playerThinkingTime);
 			players.add(player);
 		}
 	}
+	
+	private void dealCards() {
+		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
+		for (int i = 0; i < players.size(); i++) {
+			players.get(i).setHand(hands[i]);
+		}
+	}
 
-	public Player playRound() {
-		Player gameWinner = null;
+	public Optional<Integer> playRound() {
+		dealCards();
+		Integer gameWinner = null;
 		// Choosing a random lead player on the first round
 		// Player nextPlayer = players.get(random.nextInt(nbPlayers));
 		nextPlayer = players.get(0);
 
 		// Keep playing the round till there is a winner
-		while (gameWinner == null) {
+		//while (gameWinner == null) {
 			winner = null;
 			trick = new Hand(deck);
 
@@ -159,12 +179,14 @@ public class Round implements Subject {
 				notifyObserver();
 
 				// End game if winner is born
-				if (winner.getScore() == winningScore)
-					gameWinner = winner;
+				if (winner.getScore() == winningScore) {
+					gameWinner = winner.getId();
+					return Optional.of(gameWinner);
+				}
 			}
-		}
+		//}
 
-		return gameWinner;
+		return Optional.empty();
 	}
 
 	// TODO add javadoc comment

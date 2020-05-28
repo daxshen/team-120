@@ -46,7 +46,7 @@ abstract public class Player {
 		this.hand = hand;
 	}
 	
-		public int getId() {
+	public int getId() {
 		return id;
 	}
 
