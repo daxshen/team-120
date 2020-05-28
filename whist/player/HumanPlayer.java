@@ -12,7 +12,7 @@ public class HumanPlayer extends Player {
 	@Override
 	public void setHand(Hand hand) {
 		super.setHand(hand);
-		CardListener cardListener = new CardAdapter() 
+		CardListener cardListener = new CardAdapter()
 		{
 			public void leftDoubleClicked(Card card) {
 				selectedCard = card;

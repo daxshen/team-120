@@ -145,16 +145,27 @@ public class Whist extends CardGame implements Observer {
 	// Initialize graphics
 	private void initGraphics() {
 
-		setTitle("THIS IS A TEST2");
+		removeAllActors();
+		
+		setTitle("THIS IS A WIP");
 		setStatusText("Initializing...");
 
 		// initialize sprites
-		for (int i = 0; i < round.getPlayers().size(); i++) {
-			Player player = round.getPlayers().get(i);
+		RowLayout[] layouts = new RowLayout[round.getPlayers().size()];
+
+		for (int i = 0; i < round.getPlayers().size(); i++) {			
+			int id = round.getPlayerId(i);
 
 			// Score sprites
-			scoreActors[player.getId()] = new TextActor("0", Color.WHITE, bgColor, bigFont);
-			addActor(scoreActors[player.getId()], scoreLocations[player.getId()]);
+			scoreActors[id] = new TextActor("0", Color.WHITE, bgColor, bigFont);
+			addActor(scoreActors[id], scoreLocations[id]);
+
+			//Hand card sprites
+			layouts[id] = new RowLayout(handLocations[id], handWidth);
+			layouts[id].setRotationAngle(90 * id);
+			round.getPlayerById(id).getHand().setView(this, layouts[id]);
+			round.getPlayerById(id).getHand().setTargetArea(new TargetArea(trickLocation));
+			round.getPlayerById(id).getHand().draw();	
 		}
 
 		// Trump sprites
@@ -166,11 +177,11 @@ public class Whist extends CardGame implements Observer {
 	private void updateGraphics() {
 		updateScoreGraphics();
 		updateText();
-		updateHandGraphics();
+		updateCardGraphics();
 	}
 
 	// TODO Comment
-	private void updateScoreGraphics() {
+	private boolean updateScoreGraphics() {
 		for (int i = 0; i < round.getPlayers().size(); i++) {
 			// Update score sprites
 			removeActor(scoreActors[round.getPlayerId(i)]);
@@ -178,41 +189,32 @@ public class Whist extends CardGame implements Observer {
 					bgColor, bigFont);
 			addActor(scoreActors[round.getPlayerId(i)], scoreLocations[round.getPlayerId(i)]);
 		}
+		return true;
 	}
 
 	// TODO Comment
-	private void updateHandGraphics() {
-
-		//Player hand card sprites
-		for (int i = 0; i < round.getPlayers().size(); i ++)
-		{
-			RowLayout[] layouts = new RowLayout[round.getPlayers().size()];
-			layouts[round.getPlayerId(i)] = new RowLayout(handLocations[round.getPlayerId(i)], handWidth);
-			layouts[round.getPlayerId(i)].setRotationAngle(90 * i);
-			round.getPlayerHand(i).setView(this, layouts[i]);
-			round.getPlayerHand(i).setTargetArea(new TargetArea(trickLocation));
-			round.getPlayerHand(i).draw();	
-		}
+	private boolean updateCardGraphics() {
 		
 		//Trick desktop card sprites
-		if (round.getWinner() != null)
-			round.getTrick().setView(this, new RowLayout(hideLocation, 0));
-		else
-			round.getTrick().setView(this, new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
+		if (round.getTrickWinner() != null)round.getTrick().setView(this, new RowLayout(hideLocation, 0));else
+		round.getTrick().setView(this, new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
 		round.getTrick().draw();
 		round.getTrick().setVerso(false);
 		
+		return true;
+		
 	}
 
 	// TODO Comment
-	private void updateText() {
-		if (round.getWinner() != null) {
-			setStatusText("Player " + round.getWinner().getId() + " wins trick.");
+	private boolean updateText() {
+		if (round.getTrickWinner() != null) {
+			setStatusText("Player " + round.getTrickWinner().getId() + " wins trick.");
 			delay(600);
 		} else {
-			setStatusText(round.getNextPlayer().getMessage());
-			delay(round.getNextPlayer().getThinkingTime());
+			setStatusText(round.getActivePlayer().getMessage());
+			delay(round.getActivePlayer().getThinkingTime());
 		}
+		return true;
 	}
 
 	public Whist() {
@@ -222,14 +224,14 @@ public class Whist extends CardGame implements Observer {
 
 		round = new Round(deck, nbPlayers, thinkingTime, nbStartCards, winningScore);
 		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
-		initGraphics();
-		// Optional<Player> winner;
+
 		Optional<Integer> winner;
 		do {
+			initGraphics();
 			winner = round.playRound();
 		} while (!winner.isPresent());
 		addActor(new Actor("sprites/gameover.gif"), textLocation);
-		setStatusText("Game over. Winner is player: " + winner);
+		setStatusText("Game over. Winner is player: " + winner.get());
 		refresh();
 
 	}

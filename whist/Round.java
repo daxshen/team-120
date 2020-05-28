@@ -19,26 +19,26 @@ public class Round implements Subject {
 	private Whist.Suit trump;
 	private int numPlayers;
 	private int numStartCards;
-	private Player nextPlayer;
-	private Player winner;
+	private Player activePlayer;
+	private Player trickWinner;
 	private ArrayList<Player> players = new ArrayList<>();
 	private ArrayList<Observer> observers = new ArrayList<>();
 
 	// ------------------- Getters & Setters ---------------
-	public Player getWinner() {
-		return winner;
+	public Player getTrickWinner() {
+		return trickWinner;
 	}
 
-	public void setWinner(Player winner) {
-		this.winner = winner;
+	public void setTrickWinner(Player trickWinner) {
+		this.trickWinner = trickWinner;
 	}
 
-	public Player getNextPlayer() {
-		return nextPlayer;
+	public Player getActivePlayer() {
+		return activePlayer;
 	}
 
-	public void setNextPlayer(Player nextPlayer) {
-		this.nextPlayer = nextPlayer;
+	public void setActivePlayer(Player nextPlayer) {
+		this.activePlayer = nextPlayer;
 	}
 
 	public Whist.Suit getTrump() {
@@ -88,17 +88,33 @@ public class Round implements Subject {
 	public int getPlayerId(int index) {
 		return players.get(index).getId();
 	}
-	
+
 	public int getPlayerScore(int index) {
 		return players.get(index).getScore();
 	}
-	
+
 	public Hand getPlayerHand(int index) {
 		return players.get(index).getHand();
 	}
-	
+
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
+	}
+	
+	public Player getPlayerById(int id) {
+		for (Player player: players) {
+			if(player.getId() == id)
+				return player;
+		}
+		return null;
+	}
+	
+	public boolean outOfCards() {
+		for (Player player: players) {
+			if (!player.getHand().isEmpty())
+				return false;
+		}
+		return true;
 	}
 
 	// ------------------- Constructors --------------------
@@ -111,22 +127,24 @@ public class Round implements Subject {
 		this.trump = Whist.randomEnum(Whist.Suit.class);
 
 		initPlayers(playerThinkingTime);
+		dealCards();
 	}
 
 	// ------------------- Methods --------------------------
 	private void initPlayers(int playerThinkingTime) {
-		//Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
-																	// ignored
+		// Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of
+		// hands is leftover cards; these are
+		// ignored
 		for (int i = 0; i < numPlayers; i++) {
 			// TODO specify player type according to id
 			Player player = null;
-			if (i == 0) player = new HumanPlayer(i, null, playerThinkingTime);else
+			if (i == 0)player = new HumanPlayer(i, null, playerThinkingTime);else
 				player = new ComputerPlayer(i, null, playerThinkingTime);
 			players.add(player);
 		}
 	}
-	
-	private void dealCards() {
+
+	public void dealCards() {
 		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
 		for (int i = 0; i < players.size(); i++) {
 			players.get(i).setHand(hands[i]);
@@ -134,58 +152,65 @@ public class Round implements Subject {
 	}
 
 	public Optional<Integer> playRound() {
-		dealCards();
-		Integer gameWinner = null;
+		Integer roundWinner = null;
+		trick = new Hand(deck);
+
 		// Choosing a random lead player on the first round
-		// Player nextPlayer = players.get(random.nextInt(nbPlayers));
-		nextPlayer = players.get(0);
+		activePlayer = players.get(0);
 
-		// Keep playing the round till there is a winner
-		//while (gameWinner == null) {
-			winner = null;
-			trick = new Hand(deck);
 
+		// Game continues if there's no winner, re-deal if players run out of cards
+		//boolean outOfCards = false;
+		while (!outOfCards()) {
 			// Shift the active player to the head of the array
-			players = shiftArray(players, players.indexOf(nextPlayer));
+			players = shiftArray(players, players.indexOf(activePlayer));
 			Whist.Suit lead = null;
+			trickWinner = null;
 
 			// Each player plays a card
 			for (Player player : players) {
-				nextPlayer = player;
+				// Skips player if no card in hand
+				if (player.getHand().isEmpty())
+					continue;
+
+				//switch active player
+				activePlayer = player;
+				
 				// TODO refactor: clear last round's selectedCard
-				nextPlayer.setSelectedCard(null);
+				activePlayer.setSelectedCard(null);
 
 				// TODO Will cause infinite loop when player plays no card
 				Card playedCard = null;
 				while (null == playedCard) {
 					notifyObserver();
-					playedCard = nextPlayer.playCard();
+					playedCard = activePlayer.playCard();
 				}
 
 				// TODO refactor: lead selection
-				if (players.indexOf(nextPlayer) == 0)
-					lead = (Whist.Suit) nextPlayer.getSelectedCard().getSuit();
+				if (players.indexOf(activePlayer) == 0)
+					lead = (Whist.Suit) activePlayer.getSelectedCard().getSuit();
 
 				// Draw card graphics
 				notifyObserver();
-				nextPlayer.getSelectedCard().transfer(trick, true);
+				activePlayer.getSelectedCard().transfer(trick, true);
 			}
 
 			// Calculate result
-			winner = decideWinner(players, lead, trump);
-			if (winner != null) {
-				nextPlayer = winner;
-				winner.setScore(winner.getScore() + 1);
+			trickWinner = decideWinner(players, lead, trump);
+			if (trickWinner != null) {
+				activePlayer = trickWinner;
+				trickWinner.setScore(trickWinner.getScore() + 1);
+				trick.removeAll(true);
 				notifyObserver();
 
 				// End game if winner is born
-				if (winner.getScore() == winningScore) {
-					gameWinner = winner.getId();
-					return Optional.of(gameWinner);
+				if (trickWinner.getScore() == winningScore) {
+					roundWinner = trickWinner.getId();
+					return Optional.of(roundWinner);
 				}
 			}
-		//}
-
+		}
+		dealCards();
 		return Optional.empty();
 	}
 
@@ -196,6 +221,11 @@ public class Round implements Subject {
 
 		for (int i = 1; i < players.size(); i++) {
 			Player player = players.get(i);
+
+			// Skips player if no card in hand
+			if (player.getHand().isEmpty())
+				continue;
+
 			if ( // beat current winner with higher card
 			(player.getSelectedCard().getSuit() == winningCard.getSuit()
 					&& rankGreater(player.getSelectedCard(), winningCard)) ||
