@@ -19,27 +19,15 @@ public class Whist extends CardGame implements Observer {
 
 	// -------------------------------Attributes------------------------------------
 	ArrayList<Player> players;
-
-	public enum Suit {
-		SPADES, HEARTS, DIAMONDS, CLUBS
-	}
-
-	public enum Rank {
-		// Reverse order of rank importance (see rankGreater() below)
-		// Order of cards is tied to card images
-		ACE, KING, QUEEN, JACK, TEN, NINE, EIGHT, SEVEN, SIX, FIVE, FOUR, THREE, TWO
-	}
-
 	final String trumpImage[] = { "bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif" };
 
-	static final Random random = ThreadLocalRandom.current();
 
 	private final String version = "1.0";
 
 	public int nbStartCards = 13;
 	private final int handWidth = 400;
 	private final int trickWidth = 40;
-	private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover");
+	private final Deck deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
 	private final Location[] handLocations = { new Location(350, 625), new Location(75, 350), new Location(350, 75),
 			new Location(625, 350) };
@@ -67,36 +55,14 @@ public class Whist extends CardGame implements Observer {
 
 	private Round round = null;
 
-	//-------------------------------Utility Methods------------------------------------
-	public boolean rankGreater(Card card1, Card card2) {
-		return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
-	}
-
-	// return random Enum value
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-		int x = random.nextInt(clazz.getEnumConstants().length);
-		return clazz.getEnumConstants()[x];
-	}
-
-	// return random Card from Hand
-	public static Card randomCard(Hand hand) {
-		int x = random.nextInt(hand.getNumberOfCards());
-		return hand.get(x);
-	}
-
-	// return random Card from ArrayList
-	public static Card randomCard(ArrayList<Card> list) {
-		int x = random.nextInt(list.size());
-		return list.get(x);
-	}
-
+	//-------------------------------Interface Methods------------------------------------
 	// Observer pattern
 	@Override
 	public void update() {
 		updateGraphics();
 	}
 
-	//------------------------------- Game Properties------------------------------------
+	//-------------------------------Game Properties------------------------------------
 	/*
 	 * This method initializes the game with default (original) properties Ensures
 	 * basic properties are loaded irrespective or properties file

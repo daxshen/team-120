@@ -17,7 +17,7 @@ public class Round implements Subject {
 	private Player roundWinner;
 	private Deck deck;
 	private Hand trick;
-	private Whist.Suit trump;
+	private Poker.Suit trump;
 	private int numPlayers;
 	private int numStartCards;
 	private Player activePlayer;
@@ -42,11 +42,11 @@ public class Round implements Subject {
 		this.activePlayer = nextPlayer;
 	}
 
-	public Whist.Suit getTrump() {
+	public Poker.Suit getTrump() {
 		return trump;
 	}
 
-	public void setTrump(Whist.Suit trump) {
+	public void setTrump(Poker.Suit trump) {
 		this.trump = trump;
 	}
 
@@ -125,7 +125,7 @@ public class Round implements Subject {
 		this.numPlayers = numPlayers;
 		this.numStartCards = numStartCards;
 		this.winningScore = winningScore;
-		this.trump = Whist.randomEnum(Whist.Suit.class);
+		this.trump = Poker.randomEnum(Poker.Suit.class);
 
 		initPlayers(playerThinkingTime);
 		dealCards();
@@ -168,7 +168,7 @@ public class Round implements Subject {
 		while (!outOfCards()) {
 			// Shift the active player to the head of the array
 			players = shiftArray(players, players.indexOf(activePlayer));
-			Whist.Suit lead = null;
+			Poker.Suit lead = null;
 			trickWinner = null;
 			trick = new Hand(deck);
 
@@ -192,7 +192,7 @@ public class Round implements Subject {
 
 				// TODO refactor: set leading suit to the first player's suit
 				if (players.indexOf(activePlayer) == 0)
-					lead = (Whist.Suit) activePlayer.getSelectedCard().getSuit();
+					lead = (Poker.Suit) activePlayer.getSelectedCard().getSuit();
 
 				// Draw card graphics
 				notifyObserver();
@@ -225,12 +225,12 @@ public class Round implements Subject {
 		
 		//Reset round if out of cards
 		dealCards();
-		trump = Whist.randomEnum(Whist.Suit.class);
+		trump = Poker.randomEnum(Poker.Suit.class);
 		return Optional.empty();
 	}
 
 	// TODO add comment
-	private Card winningCard(ArrayList<Card> cards, Whist.Suit lead, Whist.Suit trump) {
+	private Card winningCard(ArrayList<Card> cards, Poker.Suit lead, Poker.Suit trump) {
 		Card winningCard = cards.get(0);
 		
 		for (int i = 1; i < cards.size(); i++) {
