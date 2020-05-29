@@ -13,3 +13,10 @@
 /player/
 /sprites/
 /dist/
+/strategy/
+/Suit.class
+/game/
+/Enum.class
+/Poker.class
+/Poker$Rank.class
+/Poker$Suit.class

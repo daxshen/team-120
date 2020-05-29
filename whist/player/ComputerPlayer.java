@@ -6,7 +6,7 @@ import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
 
 public class ComputerPlayer extends Player {
-	//------------------- Attribute
+	//------------------- Attribute ----------------------
 	
 	//------------------- Constructors -------------------
 	public ComputerPlayer(int id, Hand hand, int thinkingTime) {
@@ -29,5 +29,4 @@ public class ComputerPlayer extends Player {
     }
     
 	//------------------- Methods ------------------------
-    //strategy branch test
 }

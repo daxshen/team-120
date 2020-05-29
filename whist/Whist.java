@@ -48,7 +48,6 @@ public class Whist extends CardGame implements Observer {
 	private Actor[] scoreActors = { null, null, null, null };
 	private final Location trickLocation = new Location(350, 350);
 	private final Location textLocation = new Location(350, 450);
-	private Hand[] hands;
 	private Location hideLocation = new Location(-500, -500);
 	private Location trumpsActorLocation = new Location(50, 50);
 
