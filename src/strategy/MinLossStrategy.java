@@ -7,17 +7,13 @@ import game.Poker.*;
 
 //TODO add comment
 class MinLossStrategy extends PlayStrategy{
-	// ------------------- Attributes ----------------------
-
 	// ------------------- Constructors --------------------
-	public MinLossStrategy(ArrayList<Card> hand, ArrayList<Card> cardPool, Suit trump, Suit lead) {
-		super(hand, cardPool, trump, lead);
+	public MinLossStrategy() {
+		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	// ------------------- Methods -------------------------
-	public Card playCard(ArrayList<Card> hand, ArrayList<Card> playedCards, Suit trump, Suit lead, int score) {
-		return null;
-	}
+
 
 }

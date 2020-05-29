@@ -1,6 +1,7 @@
 package strategy;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import ch.aplu.jcardgame.Card;
 import game.Poker.Suit;
@@ -10,46 +11,35 @@ import game.Poker.Suit;
 public class PlayStrategy implements IStrategy{
 
 	// ------------------- Attributes ----------------------
-	protected ArrayList<Card> hand;
-	protected ArrayList<Card> existingCards;
+/*	protected ArrayList<Card> hand;
+	protected ArrayList<Card> trick;
 	protected Suit trump;
-	protected Suit lead;
+	protected Suit lead;*/
 	
 	
 	
 	// ------------------- Constructors --------------------
-	public PlayStrategy(
+/*	public PlayStrategy(
 			ArrayList<Card> hand, 
 			ArrayList<Card> cardPool, 
 			Suit trump, 
 			Suit lead) {
 		
 		this.hand = hand;
-		this.existingCards = cardPool;
+		this.trick = cardPool;
 		this.trump = trump;
 		this.lead = lead;
 		
-	}
+	}*/
 
-	// ------------------- Methods -----------------------------
-	//TODO add comment
-	public Card playCard() {
-		return null;
-	}
-	
-	
-	public Card playCard(
-			ArrayList<Card> hand, 
-			ArrayList<Card> cardPool, 
-			Suit trump, 
-			Suit lead) {
+	public PlayStrategy() {}
 		
-		return null;
-	}
-	
 	// ------------------- Interface Method --------------------
+	//TODO add comment
 	@Override
-	public Card play() {	
-		return playCard();
+	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {	
+		//Default computer player will play a random card regardless of rules
+		int i = ThreadLocalRandom.current().nextInt(hand.size());
+		return hand.get(i);
 	}
 }

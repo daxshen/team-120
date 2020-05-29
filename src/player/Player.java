@@ -1,16 +1,20 @@
 package player;
 
+import java.util.ArrayList;
+
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
+import game.Poker;
 import strategy.PlayStrategy;
 
+//TODO add comment
 abstract public class Player {
 	//------------------- Attributes --------------------
 	protected int id;
 	protected int score = 0;
-	protected Hand hand;
+	protected Hand hand = null;
 	protected Card selectedCard = null;
-	protected String message;
+	protected String message = "";
 	protected int thinkingTime;
 	protected PlayStrategy playStrategy = null;
 
@@ -79,20 +83,19 @@ abstract public class Player {
 	
 	
 	//------------------- Constructors -------------------
-	public Player(int id, Hand hand, int thinkingTime) {	
+	public Player(int id, int thinkingTime, PlayStrategy playStrategy) {	
 		this.id = id;
-		this.hand = hand;
 		this.thinkingTime = thinkingTime;
+		this.playStrategy = new PlayStrategy();
 	}
 	
 	
 	//------------------- Methods ------------------------
-	//TODO add guard check where hand is empty
-	public Card playCard() {
-		
-		//return playStrategy.execute();
+	//TODO add guard check where hand is empty	
+	//TODO add comment
+	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
+		selectedCard = playStrategy.execute(hand.getCardList(), trick, trump, lead);
 		
 		return selectedCard;
 	}
-	
 }

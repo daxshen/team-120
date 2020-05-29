@@ -7,21 +7,21 @@ import game.Poker.Suit;
 
 //TODO add comment
 abstract class SmartStrategy extends PlayStrategy{
-	
 	// ------------------- Attributes ----------------------
-	protected ArrayList<PlayStrategy> strategies = null;
+	private ArrayList<Card> existingcCards = new ArrayList<>();
+	private ArrayList<PlayStrategy> strategies = new ArrayList<>();
 	
 	
 	// ------------------- Constructors --------------------
-	public SmartStrategy(ArrayList<Card> hand, ArrayList<Card> cardPool, Suit trump, Suit lead) {
-		super(hand, cardPool, trump, lead);
-		// TODO Auto-generated constructor stub
+	public SmartStrategy() {
+		super();
 	}
 
-	// ------------------- Methods -----------------------------
+	// ------------------- Interface Method --------------------
 	@Override
-	public Card playCard() {
-		return super.playCard();
+	//TODO add comment
+	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
+		return super.execute(hand, trick, trump, lead);
 	}
 
 }

@@ -143,8 +143,8 @@ public class Round implements Subject {
 		for (int i = 0; i < numPlayers; i++) {
 			// TODO specify player type according to id
 			Player player = null;
-			if (i == 0)player = new HumanPlayer(i, null, playerThinkingTime);else
-				player = new ComputerPlayer(i, null, playerThinkingTime);
+			//if (i == 0)player = new HumanPlayer(i, playerThinkingTime, null);else
+				player = new ComputerPlayer(i, playerThinkingTime, null);
 			players.add(player);
 		}
 	}
@@ -190,7 +190,7 @@ public class Round implements Subject {
 				Card playedCard = null;
 				do {
 					notifyObserver(); //update UI messages
-					playedCard = activePlayer.playCard();
+					playedCard = activePlayer.playCard(trick.getCardList(), trump, lead);
 				} while (playedCard == null);
 
 				// TODO refactor: set leading suit to the first player's suit

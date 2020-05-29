@@ -1,32 +1,17 @@
 package player;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ch.aplu.jcardgame.Card;
-import ch.aplu.jcardgame.Hand;
+import game.Poker;
+import strategy.PlayStrategy;
 
 public class ComputerPlayer extends Player {
-	//------------------- Attribute ----------------------
-	
 	//------------------- Constructors -------------------
-	public ComputerPlayer(int id, Hand hand, int thinkingTime) {
-		super(id, hand, thinkingTime);
+	public ComputerPlayer(int id, int thinkingTime, PlayStrategy playStrategy) {
+		super(id, thinkingTime, playStrategy);
 		this.message = "Player " + id + " thinking...";
-
 	}
 	
-	
-	//------------------- Methods ------------------------
-	//TODO A default player will play any random card
-	public Card playCard() {
-		selectedCard = randomCard(hand);
-		return super.playCard();
-	}
-	
-    public static Card randomCard(Hand hand){
-        int x = ThreadLocalRandom.current().nextInt(hand.getNumberOfCards());
-        return hand.get(x);
-    }
-    
-	//------------------- Methods ------------------------
 }

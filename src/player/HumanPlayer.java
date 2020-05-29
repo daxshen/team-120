@@ -1,13 +1,15 @@
 package player;
 
+import java.util.ArrayList;
+
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.CardAdapter;
 import ch.aplu.jcardgame.CardListener;
 import ch.aplu.jcardgame.Hand;
+import game.Poker;
+import strategy.PlayStrategy;
 
 public class HumanPlayer extends Player {
-	//------------------- Attributes -------------------------------
-
 	//------------------- Getters & Setters ------------------------
 	@Override
 	public void setHand(Hand hand) {
@@ -22,8 +24,8 @@ public class HumanPlayer extends Player {
 	}
 	
 	//------------------- Constructors -----------------------------
-	public HumanPlayer(int id, Hand hand, int thinkingTime) {
-		super(id, hand, thinkingTime);
+	public HumanPlayer(int id, int thinkingTime, PlayStrategy playStrategy) {
+		super(id, thinkingTime, playStrategy);
 		this.thinkingTime = 0;
 		this.message = "Player " + id + " double-click on card to lead.";
 		
@@ -40,9 +42,9 @@ public class HumanPlayer extends Player {
 	//------------------- Methods ----------------------------------
 	//TODO comment
 	@Override
-	public Card playCard() {
+	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
 		hand.setTouchEnabled(true);
-		return super.playCard();
+		return selectedCard;
 	}
 
 }
