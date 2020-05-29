@@ -1,7 +1,9 @@
 
 // Whist.java
 
-import ch.aplu.jcardgame.*;
+import ch.aplu.jcardgame.CardGame;
+import ch.aplu.jcardgame.RowLayout;
+import ch.aplu.jcardgame.TargetArea;
 import ch.aplu.jgamegrid.*;
 import observer.Observer;
 import player.*;
@@ -12,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("serial")
 public class Whist extends CardGame implements Observer {
@@ -21,13 +22,11 @@ public class Whist extends CardGame implements Observer {
 	ArrayList<Player> players;
 	final String trumpImage[] = { "bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif" };
 
-
 	private final String version = "1.0";
 
 	public int nbStartCards = 13;
 	private final int handWidth = 400;
 	private final int trickWidth = 40;
-	private final Deck deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
 	private final Location[] handLocations = { new Location(350, 625), new Location(75, 350), new Location(350, 75),
 			new Location(625, 350) };
@@ -202,7 +201,7 @@ public class Whist extends CardGame implements Observer {
 
 		initialiseProperties();
 
-		round = new Round(deck, nbPlayers, thinkingTime, nbStartCards, winningScore);
+		round = new Round(nbPlayers, thinkingTime, nbStartCards, winningScore);
 		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
 
 		Optional<Integer> winner;

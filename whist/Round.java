@@ -119,13 +119,13 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
-	public Round(Deck deck, int numPlayers, int playerThinkingTime, int numStartCards, int winningScore) {
+	public Round(int numPlayers, int playerThinkingTime, int numStartCards, int winningScore) {
 
-		this.deck = deck;
 		this.numPlayers = numPlayers;
 		this.numStartCards = numStartCards;
 		this.winningScore = winningScore;
 		this.trump = Poker.randomEnum(Poker.Suit.class);
+		this.deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
 		initPlayers(playerThinkingTime);
 		dealCards();
