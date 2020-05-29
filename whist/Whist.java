@@ -17,6 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings("serial")
 public class Whist extends CardGame implements Observer {
 
+	// -------------------------------Attributes------------------------------------
 	ArrayList<Player> players;
 
 	public enum Suit {
@@ -32,28 +33,6 @@ public class Whist extends CardGame implements Observer {
 	final String trumpImage[] = { "bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif" };
 
 	static final Random random = ThreadLocalRandom.current();
-
-	// return random Enum value
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-		int x = random.nextInt(clazz.getEnumConstants().length);
-		return clazz.getEnumConstants()[x];
-	}
-
-	// return random Card from Hand
-	public static Card randomCard(Hand hand) {
-		int x = random.nextInt(hand.getNumberOfCards());
-		return hand.get(x);
-	}
-
-	// return random Card from ArrayList
-	public static Card randomCard(ArrayList<Card> list) {
-		int x = random.nextInt(list.size());
-		return list.get(x);
-	}
-
-	public boolean rankGreater(Card card1, Card card2) {
-		return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
-	}
 
 	private final String version = "1.0";
 
@@ -89,6 +68,36 @@ public class Whist extends CardGame implements Observer {
 
 	private Round round = null;
 
+	//-------------------------------Utility Methods------------------------------------
+	public boolean rankGreater(Card card1, Card card2) {
+		return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
+	}
+
+	// return random Enum value
+	public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
+		int x = random.nextInt(clazz.getEnumConstants().length);
+		return clazz.getEnumConstants()[x];
+	}
+
+	// return random Card from Hand
+	public static Card randomCard(Hand hand) {
+		int x = random.nextInt(hand.getNumberOfCards());
+		return hand.get(x);
+	}
+
+	// return random Card from ArrayList
+	public static Card randomCard(ArrayList<Card> list) {
+		int x = random.nextInt(list.size());
+		return list.get(x);
+	}
+
+	// Observer pattern
+	@Override
+	public void update() {
+		updateGraphics();
+	}
+
+	//------------------------------- Game Properties------------------------------------
 	/*
 	 * This method initializes the game with default (original) properties Ensures
 	 * basic properties are loaded irrespective or properties file
@@ -134,38 +143,39 @@ public class Whist extends CardGame implements Observer {
 		thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
 		enforceRules = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
 
-		System.out.println("File read properties:-");
+		System.out.println("------------ Game Properties ------------");
 		System.out.println("nbPlayers    : " + nbPlayers);
 		System.out.println("winningScore : " + winningScore);
 		System.out.println("thinkingTime : " + thinkingTime);
 		System.out.println("enforceRules : " + enforceRules);
-
+		System.out.println("-----------------------------------------");
 	}
 
+	//-------------------------------Graphics------------------------------------
 	// Initialize graphics
 	private void initGraphics() {
 
 		removeAllActors();
-		
+
 		setTitle("THIS IS A WIP");
 		setStatusText("Initializing...");
 
 		// initialize sprites
 		RowLayout[] layouts = new RowLayout[round.getPlayers().size()];
 
-		for (int i = 0; i < round.getPlayers().size(); i++) {			
+		for (int i = 0; i < round.getPlayers().size(); i++) {
 			int id = round.getPlayerId(i);
 
 			// Score sprites
 			scoreActors[id] = new TextActor("0", Color.WHITE, bgColor, bigFont);
 			addActor(scoreActors[id], scoreLocations[id]);
 
-			//Hand card sprites
+			// Hand card sprites
 			layouts[id] = new RowLayout(handLocations[id], handWidth);
 			layouts[id].setRotationAngle(90 * id);
 			round.getPlayerById(id).getHand().setView(this, layouts[id]);
 			round.getPlayerById(id).getHand().setTargetArea(new TargetArea(trickLocation));
-			round.getPlayerById(id).getHand().draw();	
+			round.getPlayerById(id).getHand().draw();
 		}
 
 		// Trump sprites
@@ -181,7 +191,7 @@ public class Whist extends CardGame implements Observer {
 	}
 
 	// TODO Comment
-	private boolean updateScoreGraphics() {
+	private void updateScoreGraphics() {
 		for (int i = 0; i < round.getPlayers().size(); i++) {
 			// Update score sprites
 			removeActor(scoreActors[round.getPlayerId(i)]);
@@ -189,31 +199,39 @@ public class Whist extends CardGame implements Observer {
 					bgColor, bigFont);
 			addActor(scoreActors[round.getPlayerId(i)], scoreLocations[round.getPlayerId(i)]);
 		}
-		return true;
 	}
 
 	// TODO Comment
-	private boolean updateCardGraphics() {
-		//Trick desktop card sprites
-		if (round.getTrickWinner() != null)round.getTrick().setView(this, new RowLayout(hideLocation, 0));else
-		round.getTrick().setView(this, new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
+	private void updateCardGraphics() {
+		// Trick desktop card sprites
+
+		// if (round.getTrickWinner() != null)
+		// round.getTrick().setView(this, new RowLayout(hideLocation, 0));else
+		round.getTrick().setView(this,
+				new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
 		round.getTrick().draw();
-		round.getTrick().setVerso(false);	
-		return true;		
+		round.getTrick().setVerso(false);
 	}
 
 	// TODO Comment
-	private boolean updateText() {
+	private void updateText() {
+		// if (round.getActivePlayer().getSelectedCard() != null)
+		// return;
+
 		if (round.getTrickWinner() != null) {
 			setStatusText("Player " + round.getTrickWinner().getId() + " wins trick.");
-			delay(600);
-		} else {
+			delay(1500);
+			return;
+		}
+		if (round.getActivePlayer().getSelectedCard() != null)
+			return;
+		else {
 			setStatusText(round.getActivePlayer().getMessage());
 			delay(round.getActivePlayer().getThinkingTime());
 		}
-		return true;
 	}
 
+	//-------------------------------Main Game Loop------------------------------------
 	public Whist() {
 		super(700, 700, 30);
 
@@ -227,6 +245,7 @@ public class Whist extends CardGame implements Observer {
 			initGraphics();
 			winner = round.playRound();
 		} while (!winner.isPresent());
+
 		addActor(new Actor("sprites/gameover.gif"), textLocation);
 		setStatusText("Game over. Winner is player: " + winner.get());
 		refresh();
@@ -236,12 +255,6 @@ public class Whist extends CardGame implements Observer {
 	public static void main(String[] args) {
 		// System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		new Whist();
-	}
-
-	// Observer pattern
-	@Override
-	public void update() {
-		updateGraphics();
 	}
 
 }

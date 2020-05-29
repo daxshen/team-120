@@ -131,6 +131,7 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Methods --------------------------
+	//TODO Add comment
 	private void initPlayers(int playerThinkingTime) {
 		// Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of
 		// hands is leftover cards; these are
@@ -144,6 +145,7 @@ public class Round implements Subject {
 		}
 	}
 
+	//TODO Add comment
 	public void dealCards() {
 		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
 		for (int i = 0; i < players.size(); i++) {
@@ -151,6 +153,8 @@ public class Round implements Subject {
 		}
 	}
 
+	
+	//TODO Add comment
 	public Optional<Integer> playRound() {
 		Integer roundWinner = null;
 
@@ -168,77 +172,96 @@ public class Round implements Subject {
 			trick = new Hand(deck);
 
 			// Each player plays a card
+			System.out.println(" Trump: " + trump.toString());
 			for (Player player : players) {
 				// Skips player if no card in hand
 				if (player.getHand().isEmpty())
 					continue;
 
-				//switch active player
 				activePlayer = player;
 				
-				// TODO refactor: clear last round's selectedCard
+				// TODO (not sure if needed): clear last round's selectedCard
 				activePlayer.setSelectedCard(null);
 
-				// TODO Will cause infinite loop when player plays no card
 				Card playedCard = null;
-				while (null == playedCard) {
-					notifyObserver();
+				do {
+					notifyObserver(); //update UI messages
 					playedCard = activePlayer.playCard();
-				}
+				} while (playedCard == null);
 
-				// TODO refactor: lead selection
+				// TODO refactor: set leading suit to the first player's suit
 				if (players.indexOf(activePlayer) == 0)
 					lead = (Whist.Suit) activePlayer.getSelectedCard().getSuit();
 
 				// Draw card graphics
 				notifyObserver();
 				activePlayer.getSelectedCard().transfer(trick, true);
+				System.out.println(" Player " + activePlayer.getId() + " : suit = " 
+				+ activePlayer.getSelectedCard().getSuit() 
+				+ ", rank = " 
+				+ activePlayer.getSelectedCard().getRankId());
 			}
 
 			// Calculate result
-			trickWinner = decideWinner(players, lead, trump);
+			trickWinner = trickWinner(players, winningCard(trick.getCardList(), lead, trump));
 			if (trickWinner != null) {
 				activePlayer = trickWinner;
+				
+				//Update score
+				System.out.println(" Winner: Player " + trickWinner.getId());
+				System.out.println("-----------------------------------------");
 				trickWinner.setScore(trickWinner.getScore() + 1);
 				notifyObserver();
 
-				// End game if winner is born
+				// End game if player reached winning score
 				if (trickWinner.getScore() == winningScore) {
 					roundWinner = trickWinner.getId();
 					return Optional.of(roundWinner);
 				}
 			}
+			trick.removeAll(true);
 		}
+		
+		//Reset round if out of cards
 		dealCards();
 		trump = Whist.randomEnum(Whist.Suit.class);
 		return Optional.empty();
 	}
 
-	// TODO add javadoc comment
-	private Player decideWinner(ArrayList<Player> players, Whist.Suit lead, Whist.Suit trump) {
-		Player winner = players.get(0);
-		Card winningCard = players.get(0).getSelectedCard();
-
-		for (int i = 1; i < players.size(); i++) {
-			Player player = players.get(i);
-
-			// Skips player if no card in hand
-			if (player.getHand().isEmpty())
-				continue;
-
-			if ( // beat current winner with higher card
-			(player.getSelectedCard().getSuit() == winningCard.getSuit()
-					&& rankGreater(player.getSelectedCard(), winningCard)) ||
+	// TODO add comment
+	private Card winningCard(ArrayList<Card> cards, Whist.Suit lead, Whist.Suit trump) {
+		Card winningCard = cards.get(0);
+		
+		for (int i = 1; i < cards.size(); i++) {
+			Card card = cards.get(i);
+			
+			// beat current winner with higher card
+			boolean sameSuit = (card.getSuit() == winningCard.getSuit());
+			boolean rankGreater = rankGreater(card, winningCard);
+			
 			// trumped when non-trump was winning
-					(player.getSelectedCard().getSuit() == trump && winningCard.getSuit() != trump)) {
-				winner = player;
+			boolean isTrump = (card.getSuit() == trump);
+			boolean winningCardNotTrump = (winningCard.getSuit() != trump);
+			
+			if ( (sameSuit && rankGreater) || (isTrump && winningCardNotTrump) ) {
+				winningCard = card;
 			}
 		}
-		System.out.println("NEW WINNER: Player " + winner.getId());
-		return winner;
+		return winningCard;
 	}
-
-	// TODO add javadoc comment
+	
+	//TODO add comment
+	private Player trickWinner(ArrayList<Player> players, Card winningCard) {
+		Player trickWinner = null;
+		for (Player player : players) {
+			if (player.getSelectedCard() == winningCard)
+				trickWinner = player;
+		}
+		return trickWinner;
+	}
+	
+	// ------------------- Utility Methods --------------------------
+	// TODO add comment
 	// Shift all elements to re-order array
 	private <T> ArrayList<T> shiftArray(ArrayList<T> list, int index) {
 
