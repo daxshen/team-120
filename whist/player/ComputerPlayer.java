@@ -29,7 +29,5 @@ public class ComputerPlayer extends Player {
     }
     
 	//------------------- Methods ------------------------
-    //asdasdasdasdasdasdasdasdasdasdasd
-    //asdasdasdasdsad
-    //asdasdasdasd
+    //strategy branch test
 }
