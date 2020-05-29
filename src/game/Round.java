@@ -1,3 +1,4 @@
+package game;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -5,6 +6,8 @@ import java.util.Optional;
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import ch.aplu.jcardgame.Hand;
+import game.Poker.Rank;
+import game.Poker.Suit;
 import observer.Observer;
 import observer.Subject;
 import player.ComputerPlayer;

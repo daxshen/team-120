@@ -2,6 +2,7 @@ package player;
 
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
+import strategy.PlayStrategy;
 
 abstract public class Player {
 	//------------------- Attributes --------------------
@@ -11,9 +12,18 @@ abstract public class Player {
 	protected Card selectedCard = null;
 	protected String message;
 	protected int thinkingTime;
+	protected PlayStrategy playStrategy = null;
 
 
 	//------------------- Getters & Setters -------------------	
+	public PlayStrategy getStrategy() {
+		return playStrategy;
+	}
+
+	public void setStrategy(PlayStrategy strategy) {
+		this.playStrategy = strategy;
+	}
+	
 	public int getThinkingTime() {
 		return thinkingTime;
 	}
@@ -79,8 +89,10 @@ abstract public class Player {
 	//------------------- Methods ------------------------
 	//TODO add guard check where hand is empty
 	public Card playCard() {
+		
+		//return playStrategy.execute();
+		
 		return selectedCard;
-		//Emulate thinking time
 	}
 	
 }

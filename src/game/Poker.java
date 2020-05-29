@@ -1,13 +1,7 @@
+package game;
+
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * 
- */
-
-/**
- * @author daxsh
- *
- */
 public class Poker {
 
 	public enum Suit {

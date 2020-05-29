@@ -1,3 +1,4 @@
+package game;
 
 // Whist.java
 
@@ -24,7 +25,6 @@ public class Whist extends CardGame implements Observer {
 
 	private final String version = "1.0";
 
-	public int nbStartCards = 13;
 	private final int handWidth = 400;
 	private final int trickWidth = 40;
 
@@ -39,6 +39,7 @@ public class Whist extends CardGame implements Observer {
 	private Location trumpsActorLocation = new Location(50, 50);
 
 	/* Game properties */
+	public int nbStartCards = 13;
 	public int nbPlayers = 4;
 	public int winningScore = 11;
 	private int thinkingTime = 2000;
