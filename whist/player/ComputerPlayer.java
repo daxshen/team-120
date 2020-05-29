@@ -6,6 +6,7 @@ import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
 
 public class ComputerPlayer extends Player {
+	//------------------- Attribute
 	
 	//------------------- Constructors -------------------
 	public ComputerPlayer(int id, Hand hand, int thinkingTime) {
@@ -26,4 +27,7 @@ public class ComputerPlayer extends Player {
         int x = ThreadLocalRandom.current().nextInt(hand.getNumberOfCards());
         return hand.get(x);
     }
+    
+	//------------------- Methods ------------------------
+    //asdasdasdasdasdasdasdasdasdasdasd
 }
