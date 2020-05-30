@@ -6,33 +6,35 @@ public class StrategyFactory {
 	private static StrategyFactory instance;
 
 	// ------------------- Getters & Setters -------------------
+	//TODO add comment
 	public static StrategyFactory getInstance() {
+		if (instance == null)
+			instance =  new StrategyFactory();
 		return instance;
 	}
 
-	// ------------------- Constructors -------------------
-	public StrategyFactory() {
-		this.instance = new StrategyFactory();
-	}
-
+	//TODO add comment
 	// ------------------- Methods ------------------------
 	public PlayStrategy getStrategy(String type) {
 
 		switch (type.toUpperCase()) {
+		case "Random":
+			return PlayStrategy.getInstance();
+
 		case "LEGAL":
-			return new LegalStrategy();
+			return LegalStrategy.getInstance();
 
 		case "MAXWIN":
-			return new MaxWinStrategy();
+			return HighestRankStrategy.getInstance();
 
 		case "MINLOSS":
-			return new MinLossStrategy();
+			return LowestRankStrategy.getInstance();
 
 		case "SMART":
-			return new SmartStrategy();
+			return SmartStrategy.getInstance();
 
 		default:
-			return new PlayStrategy();
+			return PlayStrategy.getInstance();
 		}
 	}
 }

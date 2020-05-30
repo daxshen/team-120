@@ -16,9 +16,6 @@ public class PlayerFactory {
 		return instance;	
 	}
 
-	// ------------------- Constructors -------------------
-	public PlayerFactory() {}
-
 	// ------------------- Methods ------------------------
 	//TODO add comment
 	public ArrayList<Player> generatePlayers(int numHumanPlayers, int numRandomNPCs, int numLegalNPCs, int numSmartNPCs,

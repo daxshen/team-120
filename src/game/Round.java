@@ -10,6 +10,7 @@ import observer.Observer;
 import observer.Subject;
 import player.Player;
 import player.PlayerFactory;
+import strategy.StrategyFactory;
 
 public class Round implements Subject {
 	// ------------------- Attributes --------------------
@@ -125,6 +126,7 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
+	//TODO add comment
 	public Round(
 			int numHumanPlayers,
 			int numRandomNPCs,
@@ -140,7 +142,6 @@ public class Round implements Subject {
 		this.trump = Poker.randomEnum(Poker.Suit.class);
 		this.deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
-		//initPlayers(AIThinkingTime);
 		players = PlayerFactory.getInstance().generatePlayers(numHumanPlayers, numRandomNPCs, numLegalNPCs, numSmartNPCs, AIThinkingTime);
 		dealCards();
 	}
@@ -204,7 +205,15 @@ public class Round implements Subject {
 			}
 
 			// Calculate result
-			trickWinner = trickWinner(players, winningCard(trick.getCardList(), lead, trump));
+			//trickWinner = trickWinner(players, winningCard(trick.getCardList(), lead, trump));
+			trickWinner = trickWinner(
+					players, 
+					StrategyFactory.getInstance().getStrategy("DEFAULT").winningCard(
+							trick.getCardList(), 
+							(Poker.Suit) trick.getCardList().get(0).getSuit(), 		
+							trump)		
+					);
+
 			if (trickWinner != null) {
 				activePlayer = trickWinner;
 				
@@ -229,27 +238,6 @@ public class Round implements Subject {
 		return Optional.empty();
 	}
 
-	// TODO add comment
-	private Card winningCard(ArrayList<Card> cards, Poker.Suit lead, Poker.Suit trump) {
-		Card winningCard = cards.get(0);
-		
-		for (int i = 1; i < cards.size(); i++) {
-			Card card = cards.get(i);
-			
-			// beat current winner with higher card
-			boolean sameSuit = (card.getSuit() == winningCard.getSuit());
-			boolean rankGreater = rankGreater(card, winningCard);
-			
-			// trumped when non-trump was winning
-			boolean isTrump = (card.getSuit() == trump);
-			boolean winningCardNotTrump = (winningCard.getSuit() != trump);
-			
-			if ( (sameSuit && rankGreater) || (isTrump && winningCardNotTrump) ) {
-				winningCard = card;
-			}
-		}
-		return winningCard;
-	}
 	
 	//TODO add comment
 	private Player trickWinner(ArrayList<Player> players, Card winningCard) {
@@ -290,10 +278,7 @@ public class Round implements Subject {
 		return newList;
 	}
 
-	public boolean rankGreater(Card card1, Card card2) {
-		return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
-	}
-
+	// ------------------- Interface Methods --------------------------
 	// Observer pattern
 	@Override
 	public void addObserver(Observer observer) {

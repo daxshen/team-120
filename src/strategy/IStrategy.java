@@ -8,8 +8,8 @@ import game.Poker.Suit;
 public interface IStrategy {
 	
 	public Card execute(
-			ArrayList<Card> hand, 
-			ArrayList<Card> trick, 
+			ArrayList<Card> playableCards, 
+			ArrayList<Card> playedCards, 
 			Suit trump, 
 			Suit lead);
 }
