@@ -16,18 +16,9 @@ abstract public class Player {
 	protected Card selectedCard = null;
 	protected String message = "";
 	protected int thinkingTime;
-	protected PlayStrategy playStrategy = null;
 
 
 	//------------------- Getters & Setters -------------------	
-	public PlayStrategy getStrategy() {
-		return playStrategy;
-	}
-
-	public void setStrategy(PlayStrategy strategy) {
-		this.playStrategy = strategy;
-	}
-	
 	public int getThinkingTime() {
 		return thinkingTime;
 	}
@@ -83,19 +74,16 @@ abstract public class Player {
 	
 	
 	//------------------- Constructors -------------------
-	public Player(int id, int thinkingTime, PlayStrategy playStrategy) {	
+	public Player(int id, int thinkingTime) {	
 		this.id = id;
 		this.thinkingTime = thinkingTime;
-		this.playStrategy = new PlayStrategy();
 	}
 	
 	
 	//------------------- Methods ------------------------
 	//TODO add guard check where hand is empty	
 	//TODO add comment
-	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
-		selectedCard = playStrategy.execute(hand.getCardList(), trick, trump, lead);
-		
+	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {		
 		return selectedCard;
 	}
 }

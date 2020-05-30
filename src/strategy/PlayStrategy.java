@@ -43,3 +43,12 @@ public class PlayStrategy implements IStrategy{
 		return hand.get(i);
 	}
 }
+
+//TODO add comment
+class LegalStrategy extends PlayStrategy{}
+
+//TODO add comment
+class MinLossStrategy extends PlayStrategy{}
+
+//TODO add comment
+class MaxWinStrategy extends PlayStrategy{}

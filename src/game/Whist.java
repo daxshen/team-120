@@ -39,9 +39,12 @@ public class Whist extends CardGame implements Observer {
 	private Location trumpsActorLocation = new Location(50, 50);
 
 	/* Game properties */
-	public int nbStartCards = 13;
-	public int nbPlayers = 4;
-	public int winningScore = 11;
+	private int nbStartCards = 13;
+	private int numHumanPlayers = 1;
+	private int numRandomNPCs = 4;
+	private int numLegalNPCs = 0;
+	private int numSmartNPCs = 0;
+	private int winningScore = 11;
 	private int thinkingTime = 2000;
 	private boolean enforceRules = false;
 
@@ -101,15 +104,15 @@ public class Whist extends CardGame implements Observer {
 	}
 
 	private void loadProperties() {
-		int humanPlayer = Integer.parseInt(whistProperties.getProperty("InteractivePlayer")) + 1;
-		nbPlayers = Integer.parseInt(whistProperties.getProperty("RandomNpc")) + humanPlayer;
+		numHumanPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayers"));
+		numRandomNPCs = Integer.parseInt(whistProperties.getProperty("RandomNPCs"));
 		winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
 		nbStartCards = Integer.parseInt(whistProperties.getProperty("StartingCards"));
 		thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
 		enforceRules = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
 
 		System.out.println("------------ Game Properties ------------");
-		System.out.println("nbPlayers    : " + nbPlayers);
+		System.out.println("nbPlayers    : " + numRandomNPCs);
 		System.out.println("winningScore : " + winningScore);
 		System.out.println("thinkingTime : " + thinkingTime);
 		System.out.println("enforceRules : " + enforceRules);
@@ -202,7 +205,14 @@ public class Whist extends CardGame implements Observer {
 
 		initialiseProperties();
 
-		round = new Round(nbPlayers, thinkingTime, nbStartCards, winningScore);
+		round = new Round(
+				numHumanPlayers, 
+				numRandomNPCs, 
+				numLegalNPCs, 
+				numSmartNPCs, 
+				thinkingTime, 
+				nbStartCards, 
+				winningScore);
 		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
 
 		Optional<Integer> winner;

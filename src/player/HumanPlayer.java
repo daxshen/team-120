@@ -7,7 +7,6 @@ import ch.aplu.jcardgame.CardAdapter;
 import ch.aplu.jcardgame.CardListener;
 import ch.aplu.jcardgame.Hand;
 import game.Poker;
-import strategy.PlayStrategy;
 
 public class HumanPlayer extends Player {
 	//------------------- Getters & Setters ------------------------
@@ -24,8 +23,8 @@ public class HumanPlayer extends Player {
 	}
 	
 	//------------------- Constructors -----------------------------
-	public HumanPlayer(int id, int thinkingTime, PlayStrategy playStrategy) {
-		super(id, thinkingTime, playStrategy);
+	public HumanPlayer(int id) {
+		super(id, 0);
 		this.thinkingTime = 0;
 		this.message = "Player " + id + " double-click on card to lead.";
 		
@@ -44,7 +43,7 @@ public class HumanPlayer extends Player {
 	@Override
 	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
 		hand.setTouchEnabled(true);
-		return selectedCard;
+		return super.playCard(trick, trump, lead);
 	}
 
 }

@@ -6,14 +6,14 @@ import ch.aplu.jcardgame.Card;
 import game.Poker.Suit;
 
 //TODO add comment
-abstract class SmartStrategy extends PlayStrategy{
+abstract class CompositeStrategy extends PlayStrategy{
 	// ------------------- Attributes ----------------------
 	private ArrayList<Card> existingcCards = new ArrayList<>();
 	private ArrayList<PlayStrategy> strategies = new ArrayList<>();
 	
 	
 	// ------------------- Constructors --------------------
-	public SmartStrategy() {
+	public CompositeStrategy() {
 		super();
 	}
 
@@ -23,5 +23,6 @@ abstract class SmartStrategy extends PlayStrategy{
 	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
 		return super.execute(hand, trick, trump, lead);
 	}
-
 }
+
+class SmartStrategy extends CompositeStrategy{}

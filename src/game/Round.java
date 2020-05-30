@@ -6,13 +6,10 @@ import java.util.Optional;
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
 import ch.aplu.jcardgame.Hand;
-import game.Poker.Rank;
-import game.Poker.Suit;
 import observer.Observer;
 import observer.Subject;
-import player.ComputerPlayer;
-import player.HumanPlayer;
 import player.Player;
+import player.PlayerFactory;
 
 public class Round implements Subject {
 	// ------------------- Attributes --------------------
@@ -21,8 +18,14 @@ public class Round implements Subject {
 	private Deck deck;
 	private Hand trick;
 	private Poker.Suit trump;
+	
 	private int numPlayers;
+	private int numHumanPlayers;
+	private int numRandomNPCs;
+	private int numLegalNPCs;
+	private int numSmartNPCs;
 	private int numStartCards;
+	
 	private Player activePlayer;
 	private Player trickWinner;
 	private ArrayList<Player> players = new ArrayList<>();
@@ -122,33 +125,27 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
-	public Round(int numPlayers, int playerThinkingTime, int numStartCards, int winningScore) {
+	public Round(
+			int numHumanPlayers,
+			int numRandomNPCs,
+			int numLegalNPCs,
+			int numSmartNPCs,
+			int AIThinkingTime, 
+			int numStartCards, 
+			int winningScore) {
 
-		this.numPlayers = numPlayers;
+		this.numPlayers = numHumanPlayers + numRandomNPCs + numLegalNPCs + numSmartNPCs;
 		this.numStartCards = numStartCards;
 		this.winningScore = winningScore;
 		this.trump = Poker.randomEnum(Poker.Suit.class);
 		this.deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
-		initPlayers(playerThinkingTime);
+		//initPlayers(AIThinkingTime);
+		players = PlayerFactory.getInstance().generatePlayers(numHumanPlayers, numRandomNPCs, numLegalNPCs, numSmartNPCs, AIThinkingTime);
 		dealCards();
 	}
 
-	// ------------------- Methods --------------------------
-	//TODO Add comment
-	private void initPlayers(int playerThinkingTime) {
-		// Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of
-		// hands is leftover cards; these are
-		// ignored
-		for (int i = 0; i < numPlayers; i++) {
-			// TODO specify player type according to id
-			Player player = null;
-			//if (i == 0)player = new HumanPlayer(i, playerThinkingTime, null);else
-				player = new ComputerPlayer(i, playerThinkingTime, null);
-			players.add(player);
-		}
-	}
-
+	// ------------------- Methods --------------------------	
 	//TODO Add comment
 	public void dealCards() {
 		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
