@@ -37,7 +37,7 @@ public class PlayStrategy implements IStrategy {
 		if (cards.size() > 0) {
 			lowest = cards.get(0);
 			for (int i = 1 ; i < cards.size(); i++) {
-				if(cards.get(i).getRankId() > lowest.getRankId());
+				if(!rankGreater(cards.get(i), lowest));
 					lowest = cards.get(i);
 			}
 		}
@@ -49,7 +49,7 @@ public class PlayStrategy implements IStrategy {
 		if (cards.size() > 0) {
 			highest = cards.get(0);
 			for (int i = 1 ; i < cards.size(); i++) {
-				if(cards.get(i).getRankId() < highest.getRankId());
+				if(rankGreater(cards.get(i), highest));
 					highest = cards.get(i);
 			}
 		}
@@ -125,7 +125,11 @@ class LegalStrategy extends PlayStrategy {
 
 //TODO add comment
 class TrumpOnlyStrategy extends PlayStrategy {
-	
+	public static PlayStrategy getInstance() {
+		if (instance == null)
+			instance = new TrumpOnlyStrategy();
+		return instance;
+	}
 	//TODO add comment
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
@@ -141,6 +145,12 @@ class TrumpOnlyStrategy extends PlayStrategy {
 
 //TODO add comment
 class LowestRankStrategy extends PlayStrategy{
+	public static PlayStrategy getInstance() {
+		if (instance == null)
+			instance = new LowestRankStrategy();
+		return instance;
+	}
+	
 	//TODO add comment
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
@@ -157,5 +167,10 @@ class LowestRankStrategy extends PlayStrategy{
 
 //TODO add comment
 class HighestRankStrategy extends PlayStrategy{
+	public static PlayStrategy getInstance() {
+		if (instance == null)
+			instance = new HighestRankStrategy();
+		return instance;
+	}
 
 }
