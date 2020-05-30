@@ -106,6 +106,8 @@ public class Whist extends CardGame implements Observer {
 	private void loadProperties() {
 		numHumanPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayers"));
 		numRandomNPCs = Integer.parseInt(whistProperties.getProperty("RandomNPCs"));
+		numLegalNPCs = Integer.parseInt(whistProperties.getProperty("LegalNPCs"));
+		numSmartNPCs = Integer.parseInt(whistProperties.getProperty("SmartNPCs"));
 		winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
 		nbStartCards = Integer.parseInt(whistProperties.getProperty("StartingCards"));
 		thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));

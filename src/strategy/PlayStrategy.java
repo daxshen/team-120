@@ -11,7 +11,7 @@ import game.Poker.Suit;
 public class PlayStrategy implements IStrategy {
 
 	// ------------------- Attributes ----------------------
-	private static PlayStrategy instance;
+	protected static PlayStrategy instance;
 
 	// ------------------- Getters & Setters -------------------
 	//TODO add comment
@@ -98,12 +98,23 @@ public class PlayStrategy implements IStrategy {
 
 //TODO add comment
 class LegalStrategy extends PlayStrategy {
+	public static PlayStrategy getInstance() {
+		if (instance == null)
+			instance = new LegalStrategy();
+		return instance;
+	}
 	
 	//TODO add comment
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
 		
-		ArrayList<Card> legalCards = getCardsOfSuit(hand, lead);
+		ArrayList<Card> legalCards = new ArrayList<>();
+		ArrayList<Card> leadCards = getCardsOfSuit(hand, lead);
+		ArrayList<Card> trumpCards = getCardsOfSuit(hand, trump);
+		legalCards.addAll(leadCards);
+		legalCards.addAll(trumpCards);
+		
+		
 		if (legalCards.size() > 0)
 			return super.execute(legalCards, trick, trump, lead);
 		else

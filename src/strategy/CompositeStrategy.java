@@ -23,6 +23,11 @@ abstract class CompositeStrategy extends PlayStrategy{
 
 //TODO add comment
 class SmartStrategy extends CompositeStrategy{
+	public static PlayStrategy getInstance() {
+		if (instance == null)
+			instance = new SmartStrategy();
+		return instance;
+	}
 	
 	// ------------------- Constructors --------------------
 	public SmartStrategy() {
