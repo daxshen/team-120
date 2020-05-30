@@ -1,6 +1,7 @@
+/dist/
+/factory/
 /game/
-/strategy/
-/Poker$Rank.class
-/Poker$Suit.class
-/Poker.class
+/observer/
 /player/
+/sprites/
+/strategy/

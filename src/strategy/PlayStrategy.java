@@ -29,7 +29,7 @@ public class PlayStrategy implements IStrategy{
 		this.trick = cardPool;
 		this.trump = trump;
 		this.lead = lead;
-		
+		testtset
 	}*/
 
 	public PlayStrategy() {}
