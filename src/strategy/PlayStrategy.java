@@ -9,15 +9,9 @@ import game.Poker;
 import game.Poker.Suit;
 
 //TODO add comment
-public class PlayStrategy implements IStrategy {	
-	// ------------------- Interface Method --------------------
-	// TODO add comment
-	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
-		// Default computer player will play a random card regardless of rules
-		int i = ThreadLocalRandom.current().nextInt(playableCards.size());
-		return playableCards.get(i);
-	}
+public abstract class PlayStrategy implements IStrategy {	
+	private static PlayStrategy instance;
+	
 	
 	// ------------------ Utility Methods -------------------
 	//TODO add comment
@@ -118,37 +112,13 @@ public class PlayStrategy implements IStrategy {
 	}
 }
 
-
-
-
-/*//TODO add comment
-class LegalStrategy extends PlayStrategy {
-	
-	//TODO add comment
-	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
-		
-		ArrayList<Card> legalCards = new ArrayList<>();
-		ArrayList<Card> leadCards = getCardsOfSuit(playableCards, lead);
-		ArrayList<Card> trumpCards = getCardsOfSuit(playableCards, trump);
-		legalCards.addAll(leadCards);
-		legalCards.addAll(trumpCards);
-		
-		if (playedCards.size() == 0 || legalCards.size() == 0)
-			return super.execute(playableCards, playedCards, trump, lead);
-		else
-			return super.execute(legalCards, playedCards, trump, lead);
-
-	}
-}*/
-
 //TODO add comment
 class RandomStrategy extends PlayStrategy {
 	
 	//TODO add comment
 	@Override
 	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
-		return randomCard(playedCards);
+		return randomCard(playableCards);
 	}
 }
 
@@ -169,10 +139,35 @@ class LegalStrategy extends PlayStrategy {
 }
 
 //TODO add comment
-class TrumpOnlyStrategy extends PlayStrategy {}
+class TrumpOnlyStrategy extends PlayStrategy {
+	
+	//TODO add comment
+	@Override
+	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
+		
+		ArrayList<Card> trumpCards = getCardsOfSuit(playableCards, trump);
+		if (trumpCards.size() != 0)
+			return randomCard(trumpCards);
+		else
+			return randomCard(playableCards);
+	}	
+}
+
+
+class SmartStrategy2 extends PlayStrategy {
+	
+	//TODO add comment
+	@Override
+	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
+		
+		Card winningCard = winningCard(playedCards, lead, trump);
+		
+		return winningCard;
+		
+	}	
+}
+//TODO add comment
+/*class LowestRankStrategy extends PlayStrategy{}
 
 //TODO add comment
-class LowestRankStrategy extends PlayStrategy{}
-
-//TODO add comment
-class HighestRankStrategy extends PlayStrategy{}
+class HighestRankStrategy extends PlayStrategy{}*/

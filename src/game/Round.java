@@ -135,6 +135,7 @@ public class Round implements Subject {
 																		// are
 		for (int i = 0; i < players.size(); i++) {
 			players.get(i).setHand(hands[i]);
+			players.get(i).getHand().sort(Hand.SortType.SUITPRIORITY, true);
 		}
 	}
 

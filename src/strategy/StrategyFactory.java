@@ -20,7 +20,7 @@ public class StrategyFactory {
 
 		switch (playStyle.toUpperCase()) {
 		case "RANDOM":
-			return new PlayStrategy();
+			return new RandomStrategy();
 
 		case "LEGAL":
 			return new LegalStrategy();
@@ -35,7 +35,7 @@ public class StrategyFactory {
 			return SmartStrategy.getInstance();*/
 			
 		default: 
-			return new PlayStrategy();
+			return new RandomStrategy();
 		}
 	}
 }

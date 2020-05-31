@@ -5,7 +5,7 @@ import ch.aplu.jcardgame.Card;
 import game.Poker.Suit;
 
 //TODO add comment
-abstract class CompositeStrategy extends PlayStrategy{
+abstract class CompositeStrategy extends LegalStrategy{
 	
 	// ------------------- Attributes ----------------------
 	private ArrayList<Card> previousCards = new ArrayList<>();
