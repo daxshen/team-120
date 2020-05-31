@@ -190,7 +190,7 @@ public class Whist extends CardGame implements Observer {
 
 		if (round.getTrickWinner() != null) {
 			setStatusText("Player " + round.getTrickWinner().getId() + " wins trick.");
-			delay(1500);
+			delay(3000);
 			return;
 		}
 		if (round.getActivePlayer().getSelectedCard() != null)

@@ -1,10 +1,16 @@
 package strategy;
 
+import java.util.ArrayList;
+
+import ch.aplu.jcardgame.Card;
+import game.Poker;
+import game.Poker.Suit;
+
 //TODO add comment
 public class StrategyFactory {
 	// ------------------- Attributes ---------------------
 	private static StrategyFactory instance;
-
+	
 	// ------------------- Getters & Setters -------------------
 	//TODO add comment
 	public static StrategyFactory getInstance() {
@@ -15,16 +21,16 @@ public class StrategyFactory {
 
 	//TODO add comment
 	// ------------------- Methods ------------------------
-	public PlayStrategy getStrategy(String type) {
+	public static PlayStrategy getStrategy(String playStyle) {
 
-		switch (type.toUpperCase()) {
-		case "Random":
-			return PlayStrategy.getInstance();
+		switch (playStyle.toUpperCase()) {
+		case "RANDOM":
+			return new PlayStrategy();
 
 		case "LEGAL":
-			return LegalStrategy.getInstance();
+			return new LegalStrategy();
 
-		case "MAXWIN":
+/*		case "MAXWIN":
 			return HighestRankStrategy.getInstance();
 
 		case "MINLOSS":
@@ -34,7 +40,8 @@ public class StrategyFactory {
 			return SmartStrategy.getInstance();
 
 		default:
-			return PlayStrategy.getInstance();
+			return PlayStrategy.getInstance();*/
 		}
+		return null;
 	}
 }

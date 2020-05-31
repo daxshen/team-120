@@ -10,6 +10,7 @@ import observer.Observer;
 import observer.Subject;
 import player.Player;
 import player.PlayerFactory;
+import strategy.Calculator;
 import strategy.StrategyFactory;
 
 public class Round implements Subject {
@@ -194,7 +195,25 @@ public class Round implements Subject {
 				// TODO refactor: set leading suit to the first player's suit
 				if (players.indexOf(activePlayer) == 0)
 					lead = (Poker.Suit) activePlayer.getSelectedCard().getSuit();
-
+				
+				// Check: Following card must follow suit if possible
+				boolean isLegal = Calculator.getInstance().isLegal(activePlayer.getHand().getCardList(), trick.getCardList(), activePlayer.getSelectedCard(), trump, lead);
+				if (!isLegal) {
+					// Rule violation
+					String violation = 
+							"Follow rule broken by player " + activePlayer.getId() + 
+							" attempting to play " + activePlayer.getSelectedCard();
+					System.out.println(violation);
+/*					if (enforceRules)
+						try {
+							throw (new BrokeRuleException(violation));
+						} catch (BrokeRuleException e) {
+							e.printStackTrace();
+							System.out.println("A cheating player spoiled the game!");
+							System.exit(0);
+						}*/
+				}
+				
 				// Draw card graphics
 				notifyObserver();
 				activePlayer.getSelectedCard().transfer(trick, true);
@@ -206,13 +225,8 @@ public class Round implements Subject {
 
 			// Calculate result
 			//trickWinner = trickWinner(players, winningCard(trick.getCardList(), lead, trump));
-			trickWinner = trickWinner(
-					players, 
-					StrategyFactory.getInstance().getStrategy("DEFAULT").winningCard(
-							trick.getCardList(), 
-							(Poker.Suit) trick.getCardList().get(0).getSuit(), 		
-							trump)		
-					);
+			Card winningCard = Calculator.getInstance().winningCard(trick.getCardList(), lead, trump);
+			trickWinner = trickWinner(players, winningCard);
 
 			if (trickWinner != null) {
 				activePlayer = trickWinner;
