@@ -8,8 +8,8 @@ import game.Poker.Suit;
 abstract class CompositeStrategy extends LegalStrategy{
 	
 	// ------------------- Attributes ----------------------
-	private ArrayList<Card> previousCards = new ArrayList<>();
-	private ArrayList<PlayStrategy> strategies = new ArrayList<>();
+	protected ArrayList<Card> previousCards = new ArrayList<>();
+	protected ArrayList<Strategy> strategies = new ArrayList<>();
 	
 	// ------------------- Constructors --------------------
 	public CompositeStrategy() {
@@ -17,7 +17,7 @@ abstract class CompositeStrategy extends LegalStrategy{
 	}
 	
 	// ------------------- Methods --------------------
-	public void addStrategy(PlayStrategy strategy) {
+	public void addStrategy(Strategy strategy) {
 		strategies.add(strategy);
 	}
 }
@@ -25,13 +25,36 @@ abstract class CompositeStrategy extends LegalStrategy{
 //TODO add comment
 class SmartStrategy extends CompositeStrategy{
 	
+	// ------------------- Attributes ----------------------
+	private static SmartStrategy instance;
+	
+	// ------------------- Getters & Setters ---------------
+	public static SmartStrategy getInstance() {
+		if (instance == null) {
+			instance = new SmartStrategy();
+			return instance;
+		}
+		else
+			return instance;
+	}
+	
 	// ------------------- Constructors --------------------
 	public SmartStrategy() {
 		super();
 	}
 	
+	// ------------------- Methods -------------------------
 	@Override
-	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
-		return null;
+	public Card execute(ArrayList<Card> playableCards, ArrayList<ArrayList<Card>> playedCards, Suit trump, Suit lead) {
+		Card card = null;
+		do {
+			card = randomCard(playableCards);
+		}while(!isLegal(playableCards, playedCards.get(playedCards.size() - 1), card, trump, lead));
+		
+		previousCards.add(card);
+		
+		System.out.println("SMART strat played: ");
+		
+		return card;
 	}
 }

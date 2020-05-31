@@ -1,7 +1,6 @@
 package strategy;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ch.aplu.jcardgame.Card;
@@ -9,9 +8,7 @@ import game.Poker;
 import game.Poker.Suit;
 
 //TODO add comment
-public abstract class PlayStrategy implements IStrategy {	
-	private static PlayStrategy instance;
-	
+public abstract class Strategy {	
 	
 	// ------------------ Utility Methods -------------------
 	//TODO add comment
@@ -25,8 +22,7 @@ public abstract class PlayStrategy implements IStrategy {
 	}
 	
 	//TODO add comment
-	public boolean isLegal(ArrayList<Card> hand, ArrayList<Card> trick, Card card, Suit trump, Suit lead) {
-		
+	public boolean isLegal(ArrayList<Card> hand, ArrayList<Card> trick, Card card, Suit trump, Suit lead) {		
 		// Can play any card when player is the lead or when no suitable card
 		if (lead == null)
 			return true;
@@ -110,62 +106,56 @@ public abstract class PlayStrategy implements IStrategy {
 	public boolean rankGreater(Card card1, Card card2) {
 		return card1.getRankId() < card2.getRankId(); // Warning: Reverse rank order of cards (see comment on enum)
 	}
+	
+	//
+	abstract public Card execute(
+			ArrayList<Card> hand, 
+			ArrayList<ArrayList<Card>> previousTricks, 
+			Suit trump, 
+			Suit lead);
 }
 
 //TODO add comment
-class RandomStrategy extends PlayStrategy {
+class RandomStrategy extends Strategy {
 	
 	//TODO add comment
 	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
-		return randomCard(playableCards);
+	public Card execute(ArrayList<Card> hand, ArrayList<ArrayList<Card>> previousTricks, Suit trump, Suit lead) {
+		return randomCard(hand);
 	}
 }
 
 //TODO add comment
-class LegalStrategy extends PlayStrategy {
-	
+class LegalStrategy extends Strategy {
+		
 	//TODO add comment
 	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
+	public Card execute(ArrayList<Card> hand, ArrayList<ArrayList<Card>> previousTricks, Suit trump, Suit lead) {
 		
 		Card card = null;
 		do {
-			card = randomCard(playableCards);
-		}while(!isLegal(playableCards, playedCards, card, trump, lead));
+			card = randomCard(hand);
+		}while(!isLegal(hand, previousTricks.get(previousTricks.size() - 1), card, trump, lead));
 		
 		return card;
 	}
 }
 
-//TODO add comment
+/*//TODO add comment
 class TrumpOnlyStrategy extends PlayStrategy {
 	
 	//TODO add comment
 	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
+	public Card execute(ArrayList<Card> hand, ArrayList<Card> previousTricks, Suit trump, Suit lead) {
 		
-		ArrayList<Card> trumpCards = getCardsOfSuit(playableCards, trump);
+		ArrayList<Card> trumpCards = getCardsOfSuit(hand, trump);
 		if (trumpCards.size() != 0)
 			return randomCard(trumpCards);
 		else
-			return randomCard(playableCards);
+			return randomCard(hand);
 	}	
-}
+}*/
 
-
-class SmartStrategy2 extends PlayStrategy {
-	
-	//TODO add comment
-	@Override
-	public Card execute(ArrayList<Card> playableCards, ArrayList<Card> playedCards, Suit trump, Suit lead) {
-		
-		Card winningCard = winningCard(playedCards, lead, trump);
-		
-		return winningCard;
-		
-	}	
-}
 //TODO add comment
 /*class LowestRankStrategy extends PlayStrategy{}
 

@@ -1,7 +1,5 @@
 package player;
 
-import java.util.ArrayList;
-
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.CardAdapter;
 import ch.aplu.jcardgame.CardListener;
@@ -35,10 +33,10 @@ public class HumanPlayer extends Player {
 	//------------------- Methods ----------------------------------
 	//TODO comment
 	@Override
-	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
+	public Card playCard(Hand trick, Poker.Suit trump, Poker.Suit lead) {
 		hand.setTouchEnabled(true);
 			boolean isLegal = StrategyFactory.getInstance().getStrategy("DEFAULT")
-				.isLegal(hand.getCardList(), trick, selectedCard, trump, lead);
+				.isLegal(hand.getCardList(), trick.getCardList(), selectedCard, trump, lead);
 		if (!isLegal) 
 				selectedCard = null;
 		return super.playCard(trick, trump, lead);

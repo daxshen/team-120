@@ -170,7 +170,7 @@ public class Round implements Subject {
 				selectedCard = null;
 				do {
 					notifyObserver(); // update UI messages
-					selectedCard = activePlayer.playCard(trick.getCardList(), trump, lead);
+					selectedCard = activePlayer.playCard(trick, trump, lead);
 				} while (selectedCard == null);
 
 				// TODO refactor: set leading suit to the first player's suit
@@ -235,7 +235,7 @@ public class Round implements Subject {
 		}
 		return trickWinner;
 	}
-
+	
 	// ------------------- Utility Methods --------------------------
 	// TODO add comment
 	// Shift all elements to re-order array
@@ -264,6 +264,12 @@ public class Round implements Subject {
 		}
 		return newList;
 	}
+	
+/*	private ArrayList<ArrayList<Card>> pollCards{
+		ArrayList<ArrayList<Card>> previousTricks;
+		for (
+		
+	}*/
 
 	// ------------------- Interface Methods --------------------------
 	// Observer pattern

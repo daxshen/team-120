@@ -1,11 +1,8 @@
 package player;
 
-import java.util.ArrayList;
-
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
 import game.Poker;
-import strategy.PlayStrategy;
 
 //TODO add comment
 abstract public class Player {
@@ -83,7 +80,7 @@ abstract public class Player {
 	//------------------- Methods ------------------------
 	//TODO add guard check where hand is empty	
 	//TODO add comment
-	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
+	public Card playCard(Hand trick, Poker.Suit trump, Poker.Suit lead) {
 		if (selectedCard != null)
 			System.out.println(" Player " + id + " : suit = " + selectedCard.getSuit() + ", rank = " + selectedCard.getRankId());
 		return selectedCard;

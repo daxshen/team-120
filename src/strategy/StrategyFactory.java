@@ -1,10 +1,14 @@
 package strategy;
 
+import java.util.ArrayList;
+
+import ch.aplu.jcardgame.Card;
 
 //TODO add comment
 public class StrategyFactory {
 	// ------------------- Attributes ---------------------
 	private static StrategyFactory instance;
+	private ArrayList<Card> previousCards = new ArrayList<>();
 	
 	// ------------------- Getters & Setters -------------------
 	//TODO add comment
@@ -16,7 +20,7 @@ public class StrategyFactory {
 
 	//TODO add comment
 	// ------------------- Methods ------------------------
-	public static PlayStrategy getStrategy(String playStyle) {
+	public Strategy getStrategy(String playStyle) {
 
 		switch (playStyle.toUpperCase()) {
 		case "RANDOM":
@@ -25,6 +29,9 @@ public class StrategyFactory {
 		case "LEGAL":
 			return new LegalStrategy();
 
+		case "SMART":
+			return new SmartStrategy();
+			
 /*		case "MAXWIN":
 			return HighestRankStrategy.getInstance();
 
