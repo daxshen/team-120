@@ -16,18 +16,14 @@ import strategy.StrategyFactory;
 public class Round implements Subject {
 	// ------------------- Attributes --------------------
 	private int winningScore;
-	private Player roundWinner;
 	private Deck deck;
 	private Hand trick;
 	private Poker.Suit trump;
-	
-	private int numPlayers;
-	private int numHumanPlayers;
-	private int numRandomNPCs;
-	private int numLegalNPCs;
-	private int numSmartNPCs;
+	private Poker.Suit lead;
+	private Card selectedCard;
+
 	private int numStartCards;
-	
+
 	private Player activePlayer;
 	private Player trickWinner;
 	private ArrayList<Player> players = new ArrayList<>();
@@ -66,14 +62,6 @@ public class Round implements Subject {
 		this.winningScore = winningScore;
 	}
 
-	public Player getRoundWinner() {
-		return roundWinner;
-	}
-
-	public void setRoundWinner(Player winner) {
-		this.roundWinner = winner;
-	}
-
 	public Deck getDeck() {
 		return deck;
 	}
@@ -109,17 +97,17 @@ public class Round implements Subject {
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
-	
+
 	public Player getPlayerById(int id) {
-		for (Player player: players) {
-			if(player.getId() == id)
+		for (Player player : players) {
+			if (player.getId() == id)
 				return player;
 		}
 		return null;
 	}
-	
+
 	public boolean outOfCards() {
-		for (Player player: players) {
+		for (Player player : players) {
 			if (!player.getHand().isEmpty())
 				return false;
 		}
@@ -127,50 +115,43 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
-	//TODO add comment
-	public Round(
-			int numHumanPlayers,
-			int numRandomNPCs,
-			int numLegalNPCs,
-			int numSmartNPCs,
-			int AIThinkingTime, 
-			int numStartCards, 
-			int winningScore) {
+	// TODO add comment
+	public Round(int numHumanPlayers, int numRandomNPCs, int numLegalNPCs, int numSmartNPCs, int AIThinkingTime,
+			int numStartCards, int winningScore) {
 
-		this.numPlayers = numHumanPlayers + numRandomNPCs + numLegalNPCs + numSmartNPCs;
 		this.numStartCards = numStartCards;
 		this.winningScore = winningScore;
 		this.trump = Poker.randomEnum(Poker.Suit.class);
 		this.deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
 
-		players = PlayerFactory.getInstance().generatePlayers(numHumanPlayers, numRandomNPCs, numLegalNPCs, numSmartNPCs, AIThinkingTime);
+		players = PlayerFactory.getInstance().generatePlayers(numHumanPlayers, numRandomNPCs, numLegalNPCs,
+				numSmartNPCs, AIThinkingTime);
 		dealCards();
 	}
 
-	// ------------------- Methods --------------------------	
-	//TODO Add comment
+	// ------------------- Methods --------------------------
+	// TODO Add comment
 	public void dealCards() {
-		Hand[] hands = deck.dealingOut(numPlayers, numStartCards); // Last element of hands is leftover cards; these are
+		Hand[] hands = deck.dealingOut(players.size(), numStartCards); // Last element of hands is leftover cards; these
+																		// are
 		for (int i = 0; i < players.size(); i++) {
 			players.get(i).setHand(hands[i]);
 		}
 	}
 
-	
-	//TODO Add comment
+	// TODO Add comment
 	public Optional<Integer> playRound() {
 		Integer roundWinner = null;
 
+		//TODO change back to random
 		// Choosing a random lead player on the first round
 		activePlayer = players.get(0);
 
-
 		// Game continues if there's no winner, re-deal if players run out of cards
-		//boolean outOfCards = false;
 		while (!outOfCards()) {
 			// Shift the active player to the head of the array
 			players = shiftArray(players, players.indexOf(activePlayer));
-			Poker.Suit lead = null;
+			lead = null;
 			trickWinner = null;
 			trick = new Hand(deck);
 
@@ -182,56 +163,48 @@ public class Round implements Subject {
 					continue;
 
 				activePlayer = player;
-				
+
 				// TODO (not sure if needed): clear last round's selectedCard
 				activePlayer.setSelectedCard(null);
 
-				Card playedCard = null;
+				selectedCard = null;
 				do {
-					notifyObserver(); //update UI messages
-					playedCard = activePlayer.playCard(trick.getCardList(), trump, lead);
-				} while (playedCard == null);
+					notifyObserver(); // update UI messages
+					selectedCard = activePlayer.playCard(trick.getCardList(), trump, lead);
+				} while (selectedCard == null);
 
 				// TODO refactor: set leading suit to the first player's suit
-				if (players.indexOf(activePlayer) == 0)
-					lead = (Poker.Suit) activePlayer.getSelectedCard().getSuit();
-				
+				if (trick.isEmpty())
+					lead = (Poker.Suit) selectedCard.getSuit();
+
 				// Check: Following card must follow suit if possible
-				boolean isLegal = Calculator.getInstance().isLegal(activePlayer.getHand().getCardList(), trick.getCardList(), activePlayer.getSelectedCard(), trump, lead);
+				boolean isLegal = Calculator.getInstance().isLegal(activePlayer.getHand().getCardList(),
+						trick.getCardList(), selectedCard, trump, lead);
 				if (!isLegal) {
 					// Rule violation
-					String violation = 
-							"Follow rule broken by player " + activePlayer.getId() + 
-							" attempting to play " + activePlayer.getSelectedCard();
+					String violation = "Follow rule broken by player " + activePlayer.getId() + " attempting to play "
+							+ selectedCard;
 					System.out.println(violation);
-/*					if (enforceRules)
-						try {
-							throw (new BrokeRuleException(violation));
-						} catch (BrokeRuleException e) {
-							e.printStackTrace();
-							System.out.println("A cheating player spoiled the game!");
-							System.exit(0);
-						}*/
+					/*
+					 * if (enforceRules) try { throw (new BrokeRuleException(violation)); } catch
+					 * (BrokeRuleException e) { e.printStackTrace();
+					 * System.out.println("A cheating player spoiled the game!"); System.exit(0); }
+					 */
 				}
-				
+
 				// Draw card graphics
 				notifyObserver();
-				activePlayer.getSelectedCard().transfer(trick, true);
-				System.out.println(" Player " + activePlayer.getId() + " : suit = " 
-				+ activePlayer.getSelectedCard().getSuit() 
-				+ ", rank = " 
-				+ activePlayer.getSelectedCard().getRankId());
+				selectedCard.transfer(trick, true);
 			}
 
 			// Calculate result
-			//trickWinner = trickWinner(players, winningCard(trick.getCardList(), lead, trump));
 			Card winningCard = Calculator.getInstance().winningCard(trick.getCardList(), lead, trump);
 			trickWinner = trickWinner(players, winningCard);
 
 			if (trickWinner != null) {
 				activePlayer = trickWinner;
-				
-				//Update score
+
+				// Update score
 				System.out.println(" Winner: Player " + trickWinner.getId());
 				System.out.println("-----------------------------------------");
 				trickWinner.setScore(trickWinner.getScore() + 1);
@@ -245,15 +218,14 @@ public class Round implements Subject {
 			}
 			trick.removeAll(true);
 		}
-		
-		//Reset round if out of cards
+
+		// Reset round if out of cards
 		dealCards();
 		trump = Poker.randomEnum(Poker.Suit.class);
 		return Optional.empty();
 	}
 
-	
-	//TODO add comment
+	// TODO add comment
 	private Player trickWinner(ArrayList<Player> players, Card winningCard) {
 		Player trickWinner = null;
 		for (Player player : players) {
@@ -262,7 +234,7 @@ public class Round implements Subject {
 		}
 		return trickWinner;
 	}
-	
+
 	// ------------------- Utility Methods --------------------------
 	// TODO add comment
 	// Shift all elements to re-order array

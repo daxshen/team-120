@@ -83,7 +83,9 @@ abstract public class Player {
 	//------------------- Methods ------------------------
 	//TODO add guard check where hand is empty	
 	//TODO add comment
-	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {		
+	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
+		if (selectedCard != null)
+			System.out.println(" Player " + id + " : suit = " + selectedCard.getSuit() + ", rank = " + selectedCard.getRankId());
 		return selectedCard;
 	}
 }
