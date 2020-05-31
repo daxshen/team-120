@@ -21,7 +21,7 @@ public class ComputerPlayer extends Player {
 	//TODO add guard check where hand is empty	
 	//TODO add comment
 	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
-		selectedCard = StrategyFactory.getInstance().getStrategy(playStyle).execute(hand.getCardList(), trick, trump, lead).get(0);
+		selectedCard = StrategyFactory.getInstance().getStrategy(playStyle).execute(hand.getCardList(), trick, trump, lead);
 		return super.playCard(trick, trump, lead);
 	}
 }

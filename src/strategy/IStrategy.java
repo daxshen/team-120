@@ -7,7 +7,7 @@ import game.Poker.Suit;
 
 public interface IStrategy {
 	
-	public ArrayList<Card> execute(
+	public Card execute(
 			ArrayList<Card> playableCards, 
 			ArrayList<Card> playedCards, 
 			Suit trump, 
