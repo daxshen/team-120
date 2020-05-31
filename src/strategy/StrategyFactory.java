@@ -37,11 +37,10 @@ public class StrategyFactory {
 			return LowestRankStrategy.getInstance();
 
 		case "SMART":
-			return SmartStrategy.getInstance();
-
-		default:
-			return PlayStrategy.getInstance();*/
+			return SmartStrategy.getInstance();*/
+			
+		default: 
+			return new PlayStrategy();
 		}
-		return null;
 	}
 }

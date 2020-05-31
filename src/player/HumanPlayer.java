@@ -8,7 +8,6 @@ import ch.aplu.jcardgame.CardListener;
 import ch.aplu.jcardgame.Hand;
 import game.Poker;
 import game.Poker.Suit;
-import strategy.Calculator;
 import strategy.StrategyFactory;
 
 //TODO add comment
@@ -38,7 +37,8 @@ public class HumanPlayer extends Player {
 	@Override
 	public Card playCard(ArrayList<Card> trick, Poker.Suit trump, Poker.Suit lead) {
 		hand.setTouchEnabled(true);
-		boolean isLegal = Calculator.getInstance().isLegal(hand.getCardList(), trick, selectedCard, trump, lead);
+			boolean isLegal = StrategyFactory.getInstance().getStrategy("DEFAULT")
+				.isLegal(hand.getCardList(), trick, selectedCard, trump, lead);
 		if (!isLegal) 
 				selectedCard = null;
 		return super.playCard(trick, trump, lead);

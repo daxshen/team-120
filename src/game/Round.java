@@ -10,7 +10,6 @@ import observer.Observer;
 import observer.Subject;
 import player.Player;
 import player.PlayerFactory;
-import strategy.Calculator;
 import strategy.StrategyFactory;
 
 public class Round implements Subject {
@@ -178,8 +177,8 @@ public class Round implements Subject {
 					lead = (Poker.Suit) selectedCard.getSuit();
 
 				// Check: Following card must follow suit if possible
-				boolean isLegal = Calculator.getInstance().isLegal(activePlayer.getHand().getCardList(),
-						trick.getCardList(), selectedCard, trump, lead);
+				boolean isLegal = StrategyFactory.getInstance().getStrategy("DEFAULT").
+						isLegal(activePlayer.getHand().getCardList(), trick.getCardList(), selectedCard, trump, lead);
 				if (!isLegal) {
 					// Rule violation
 					String violation = "Follow rule broken by player " + activePlayer.getId() + " attempting to play "
@@ -198,7 +197,8 @@ public class Round implements Subject {
 			}
 
 			// Calculate result
-			Card winningCard = Calculator.getInstance().winningCard(trick.getCardList(), lead, trump);
+			Card winningCard = StrategyFactory.getInstance().getStrategy("DEFAULT").
+					winningCard(trick.getCardList(), lead, trump);
 			trickWinner = trickWinner(players, winningCard);
 
 			if (trickWinner != null) {

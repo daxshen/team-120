@@ -31,7 +31,7 @@ class SmartStrategy extends CompositeStrategy{
 	}
 	
 	@Override
-	public Card execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
+	public ArrayList<Card> execute(ArrayList<Card> hand, ArrayList<Card> trick, Suit trump, Suit lead) {
 		return null;
 	}
 }
