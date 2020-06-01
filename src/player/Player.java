@@ -4,14 +4,21 @@ import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Hand;
 import game.Poker;
 
-//TODO add comment
+/** This class represents a player*/
 abstract public class Player {
 	//------------------- Attributes --------------------
 	protected int id;
 	protected int score = 0;
+	
+	/** The {@linkplain Hand} of a player that contains its {@linkplain Card}s*/
 	protected Hand hand = null;
+	
+	/** The {@linkplain Card} that is selected to play*/
 	protected Card selectedCard = null;
+	
+	/** The {@linkplain Player}'s status text*/
 	protected String message = "";
+	
 	protected int thinkingTime;
 
 
@@ -71,6 +78,9 @@ abstract public class Player {
 	
 	
 	//------------------- Constructors -------------------
+	/** Initialises the {@linkplain Player}
+	 * @param id the ID of the player
+	 * @param thinkingTime the time it takes the player to play a {@linkplain Card}*/
 	public Player(int id, int thinkingTime) {	
 		this.id = id;
 		this.thinkingTime = thinkingTime;
@@ -78,8 +88,11 @@ abstract public class Player {
 	
 	
 	//------------------- Methods ------------------------
-	//TODO add guard check where hand is empty	
-	//TODO add comment
+	/** Selects and plays a {@linkplain Card}
+	 * @param trick the cards played by other {@linkplain Player}s
+	 * @param trump the trump's suit
+	 * @param lead the leading card's suit
+	 * @return the {@linkplain Card} selected to play*/
 	public Card playCard(Hand trick, Poker.Suit trump, Poker.Suit lead) {
 		if (selectedCard != null)
 			System.out.println(" Player " + id + " : suit = " + selectedCard.getSuit() + ", rank = " + selectedCard.getRankId());

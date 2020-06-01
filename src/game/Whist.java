@@ -16,11 +16,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class handles initlaisation of game properties and graphic components. 
+ * It also observes {@linkplain Round} to update the graphics accordingly.
+ * */
 @SuppressWarnings("serial")
 public class Whist extends CardGame implements Observer {
 
 	// -------------------------------Attributes------------------------------------
-	ArrayList<Player> players;
 	final String trumpImage[] = { "bigspade.gif", "bigheart.gif", "bigdiamond.gif", "bigclub.gif" };
 
 	private final String version = "1.0";
@@ -66,9 +69,8 @@ public class Whist extends CardGame implements Observer {
 	}
 
 	//-------------------------------Game Properties------------------------------------
-	/*
-	 * This method initializes the game with default (original) properties Ensures
-	 * basic properties are loaded irrespective or properties file
+	/**
+	 * This method initialises game properties which are based on the custom property file
 	 */
 	private void initialiseProperties() {
 
@@ -91,6 +93,9 @@ public class Whist extends CardGame implements Observer {
 		loadProperties();
 	}
 
+	/**
+	 * This method reads the property file
+	 * */
 	private void readProperties() throws FileNotFoundException, IOException {
 		// Read properties
 		FileReader inStream = null;
@@ -103,6 +108,9 @@ public class Whist extends CardGame implements Observer {
 		}
 	}
 
+	/**
+	 * This method converts the property file to attributes
+	 * */
 	private void loadProperties() {
 		numHumanPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayers"));
 		numRandomNPCs = Integer.parseInt(whistProperties.getProperty("RandomNPCs"));
@@ -122,7 +130,9 @@ public class Whist extends CardGame implements Observer {
 	}
 
 	//-------------------------------Graphics------------------------------------
-	// Initialize graphics
+	/**
+	 * This method initialises the graphic components of the game
+	 * */
 	private void initGraphics() {
 
 		removeAllActors();
@@ -153,14 +163,18 @@ public class Whist extends CardGame implements Observer {
 		addActor(trumpsActor, trumpsActorLocation);
 	}
 
-	// Update graphics based on gameplay
+	/**
+	 * This method updates the graphic components by observing the changes in {@linkplain Round}
+	 * */	
 	private void updateGraphics() {
 		updateScoreGraphics();
 		updateText();
 		updateCardGraphics();
 	}
 
-	// TODO Comment
+	/**
+	 * Updates the score number displayed
+	 * */
 	private void updateScoreGraphics() {
 		for (int i = 0; i < round.getPlayers().size(); i++) {
 			// Update score sprites
@@ -171,22 +185,21 @@ public class Whist extends CardGame implements Observer {
 		}
 	}
 
-	// TODO Comment
+	/**
+	 * Updates the card sprites
+	 * */
 	private void updateCardGraphics() {
-		// Trick desktop card sprites
 
-		// if (round.getTrickWinner() != null)
-		// round.getTrick().setView(this, new RowLayout(hideLocation, 0));else
 		round.getTrick().setView(this,
 				new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
 		round.getTrick().draw();
 		round.getTrick().setVerso(false);
 	}
 
-	// TODO Comment
+	/**
+	 * Updates the status text 
+	 * */
 	private void updateText() {
-		// if (round.getActivePlayer().getSelectedCard() != null)
-		// return;
 
 		if (round.getTrickWinner() != null) {
 			setStatusText("Player " + round.getTrickWinner().getId() + " wins trick.");

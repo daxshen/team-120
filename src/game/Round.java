@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Random;
 
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
@@ -12,6 +13,9 @@ import player.Player;
 import player.PlayerFactory;
 import strategy.StrategyFactory;
 
+/**
+ * This class handles the gameplay logic of an entire round of Whist game, which consists of multiple tricks
+ * */
 public class Round implements Subject {
 	// ------------------- Attributes --------------------
 	private int winningScore;
@@ -20,12 +24,13 @@ public class Round implements Subject {
 	private Poker.Suit trump;
 	private Poker.Suit lead;
 	private Card selectedCard;
-
 	private int numStartCards;
 
 	private Player activePlayer;
 	private Player trickWinner;
 	private ArrayList<Player> players = new ArrayList<>();
+	
+	/** A list of observers that monitors the changes within{@linkplain Round} */
 	private ArrayList<Observer> observers = new ArrayList<>();
 
 	// ------------------- Getters & Setters ---------------
@@ -114,7 +119,16 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
-	// TODO add comment
+	/** 
+	 * Initialises the {@linkplain Player}s and deal cards to them
+	 * @param numHumanPlayers the number of interactive players
+	 * @param numRandomNPCs   the number of NPCs that play only random cards
+	 * @param numLegalNPCs the number of NPCs that play random, legal cards
+	 * @param numSmartNPCs the number of smart NPCs
+	 * @param AIThinkingTime  the time it takes an NPC to play a card
+	 * @param numStartCards the number of cards in each player's hand
+	 * @param winningScore the score points to win the game
+	 * */
 	public Round(int numHumanPlayers, int numRandomNPCs, int numLegalNPCs, int numSmartNPCs, int AIThinkingTime,
 			int numStartCards, int winningScore) {
 
@@ -129,7 +143,9 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Methods --------------------------
-	// TODO Add comment
+	 /** 
+	  * @param Deal cards to the players
+	  */
 	public void dealCards() {
 		Hand[] hands = deck.dealingOut(players.size(), numStartCards); // Last element of hands is leftover cards; these
 																		// are
@@ -139,13 +155,17 @@ public class Round implements Subject {
 		}
 	}
 
-	// TODO Add comment
+	 /** 
+	  * Start an round of Whist game. 
+	  * @return an {@linkplain Optional<Integer>} that contains the id of the round winner
+	  * or one that is empty if there is no winner and players are out of cards
+	  */
 	public Optional<Integer> playRound() {
 		Integer roundWinner = null;
 
-		//TODO change back to random
 		// Choosing a random lead player on the first round
-		activePlayer = players.get(0);
+		Random random = new Random();
+		activePlayer = players.get(random.nextInt(players.size()));
 
 		// Game continues if there's no winner, re-deal if players run out of cards
 		while (!outOfCards()) {
@@ -163,17 +183,14 @@ public class Round implements Subject {
 					continue;
 
 				activePlayer = player;
-
-				// TODO (not sure if needed): clear last round's selectedCard
 				activePlayer.setSelectedCard(null);
-
 				selectedCard = null;
 				do {
 					notifyObserver(); // update UI messages
 					selectedCard = activePlayer.playCard(trick, trump, lead);
 				} while (selectedCard == null);
 
-				// TODO refactor: set leading suit to the first player's suit
+				// Set leading suit to the first player's suit
 				if (trick.isEmpty())
 					lead = (Poker.Suit) selectedCard.getSuit();
 
@@ -211,7 +228,7 @@ public class Round implements Subject {
 				trickWinner.setScore(trickWinner.getScore() + 1);
 				notifyObserver();
 
-				// End game if player reached winning score
+				// End the round if player reached winning score
 				if (trickWinner.getScore() == winningScore) {
 					roundWinner = trickWinner.getId();
 					return Optional.of(roundWinner);
@@ -226,7 +243,12 @@ public class Round implements Subject {
 		return Optional.empty();
 	}
 
-	// TODO add comment
+	 /** 
+	  * Determines the trick winner
+	  * @param players all players in the game
+	  * @param winningCard the card that won the trick
+	  * @return the {@linkplain Player} that won the trick
+	  */
 	private Player trickWinner(ArrayList<Player> players, Card winningCard) {
 		Player trickWinner = null;
 		for (Player player : players) {
@@ -237,8 +259,13 @@ public class Round implements Subject {
 	}
 	
 	// ------------------- Utility Methods --------------------------
-	// TODO add comment
-	// Shift all elements to re-order array
+	 /** 
+	  * Shift all elements of an {@linkplain ArrayList}. 
+	  * <p>Elements that reached the end of the ArrayList will jump to the start</p>
+	  * @param list the original ArrayList
+	  * @param index the index of the element that needs to be at the start after shifting
+	  * @return the shifted ArrayList
+	  */
 	private <T> ArrayList<T> shiftArray(ArrayList<T> list, int index) {
 
 		// Do nothing if element is already the first
@@ -265,12 +292,6 @@ public class Round implements Subject {
 		return newList;
 	}
 	
-/*	private ArrayList<ArrayList<Card>> pollCards{
-		ArrayList<ArrayList<Card>> previousTricks;
-		for (
-		
-	}*/
-
 	// ------------------- Interface Methods --------------------------
 	// Observer pattern
 	@Override

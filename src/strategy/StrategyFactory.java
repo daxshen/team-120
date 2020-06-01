@@ -1,25 +1,30 @@
 package strategy;
 
-import java.util.ArrayList;
+import player.Player;
 
-import ch.aplu.jcardgame.Card;
-
-//TODO add comment
+/**
+ * This class abstracts the selection of {@linkplain Strategy} by a
+ * {@linkplain Player}
+ */
 public class StrategyFactory {
 	// ------------------- Attributes ---------------------
+	/** This singleton instance of {@linkplain StrategyFactory */
 	private static StrategyFactory instance;
-	private ArrayList<Card> previousCards = new ArrayList<>();
-	
+
 	// ------------------- Getters & Setters -------------------
-	//TODO add comment
+	/** @return the singleton instance of {@linkplain StrategyFactory */
 	public static StrategyFactory getInstance() {
 		if (instance == null)
-			instance =  new StrategyFactory();
+			instance = new StrategyFactory();
 		return instance;
 	}
 
-	//TODO add comment
 	// ------------------- Methods ------------------------
+	/**
+	 * Creates and returns a {@linkplain Strategy} based on inputs
+	 * 
+	 * @param playStyle the {@linkplain Player}'s play style
+	 */
 	public Strategy getStrategy(String playStyle) {
 
 		switch (playStyle.toUpperCase()) {
@@ -31,17 +36,16 @@ public class StrategyFactory {
 
 		case "SMART":
 			return new SmartStrategy();
-			
-/*		case "MAXWIN":
-			return HighestRankStrategy.getInstance();
 
-		case "MINLOSS":
-			return LowestRankStrategy.getInstance();
+		/*
+		 * case "MAXWIN": return HighestRankStrategy.getInstance();
+		 * 
+		 * case "MINLOSS": return LowestRankStrategy.getInstance();
+		 * 
+		 * case "SMART": return SmartStrategy.getInstance();
+		 */
 
-		case "SMART":
-			return SmartStrategy.getInstance();*/
-			
-		default: 
+		default:
 			return new RandomStrategy();
 		}
 	}
