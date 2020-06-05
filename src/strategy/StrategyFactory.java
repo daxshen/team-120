@@ -36,6 +36,7 @@ public class StrategyFactory {
 
 		case "SMART":
 			return new SmartStrategy();
+			
 
 		/*
 		 * case "MAXWIN": return HighestRankStrategy.getInstance();
