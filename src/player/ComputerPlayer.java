@@ -41,7 +41,8 @@ public class ComputerPlayer extends Player {
 
 		if (!previousTricks.contains(trick)) {
 			previousTricks.add(trick.getCardList());
+			
 		}
-
+		
 	}
 }

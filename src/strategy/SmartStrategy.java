@@ -24,9 +24,15 @@ public class SmartStrategy extends Strategy{
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<ArrayList<Card>> previousTricks, Suit trump, Suit lead) {
 		Card chosenCard = null;
-		chosenCard = strategies.get(0).execute(hand, previousTricks,trump,lead);
-		if(chosenCard==null)
-			chosenCard = strategies.get(1).execute(hand, previousTricks,trump,lead);
+		
+		
+		
+		for(Strategy strategy: strategies) {
+			chosenCard = strategy.execute(hand, previousTricks,trump,lead);
+			if(chosenCard!=null)
+				break;
+		}
+		
 		return chosenCard;
 	}
 }
