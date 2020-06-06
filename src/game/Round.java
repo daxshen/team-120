@@ -174,7 +174,7 @@ public class Round implements Subject {
 			lead = null;
 			trickWinner = null;
 			trick = new Hand(deck);
-
+			
 			// Each player plays a card
 			System.out.println(" Trump: " + trump.toString());
 			for (Player player : players) {
@@ -234,7 +234,6 @@ public class Round implements Subject {
 					return Optional.of(roundWinner);
 				}
 			}
-			trick.removeAll(true);
 		}
 
 		// Reset round if out of cards

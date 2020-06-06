@@ -190,6 +190,8 @@ public class Whist extends CardGame implements Observer {
 	 * */
 	private void updateCardGraphics() {
 
+		if (round.getTrickWinner() != null)
+			round.getTrick().setView(this, new RowLayout(hideLocation, 0));
 		round.getTrick().setView(this,
 				new RowLayout(trickLocation, (round.getTrick().getNumberOfCards() + 2) * trickWidth));
 		round.getTrick().draw();
