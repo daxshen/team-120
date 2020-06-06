@@ -30,7 +30,7 @@ public class WinStrategy extends Strategy{
 	private void refreshAtRoundEnd() {
 		 mapPlayedCards = new HashMap<Suit, ArrayList<Rank>>();
 	}
-	private String TrickPostion(ArrayList<Card> trick) {
+	private String TrickPosition(ArrayList<Card> trick) {
 		int trickTurnsTaken = trick.size();
 		
 		if (trickTurnsTaken == 0)
@@ -41,17 +41,22 @@ public class WinStrategy extends Strategy{
 			return "LAST";
 		
 	}
-	private boolean initialisePlayableCards(ArrayList<Card>  smartCards, ArrayList<Card> hand, Suit lead, Suit trump) {
-		for (Card handCard : hand) {
-			if (handCard.getSuit() == lead) //trump cards might not be allowed when 
-				smartCards.add(handCard);
-			
-		}
-		if(smartCards.isEmpty()) {
-			smartCards = hand;
-			return true;
-		}
+	private boolean initialisePlayableCards(ArrayList<Card>  smartCards, ArrayList<Card> hand, Suit lead, Suit trump, String trickPosition) {
 		
+		if(trickPosition != "LEAD") {
+			for (Card handCard : hand) {
+				if (handCard.getSuit() == lead) //trump cards might not be allowed when 
+					smartCards.add(handCard);
+				
+			}
+			if(smartCards.isEmpty()) {
+				smartCards.addAll(hand);
+				return true;
+			}
+		}
+		else {
+			smartCards.addAll(hand);
+		}
 		return false;
 	}	
 	
@@ -69,7 +74,6 @@ public class WinStrategy extends Strategy{
 		
 		for(Suit suit: maxCards.keySet()) {
 			smartCards.add(maxCards.get(suit));
-			System.out.println(maxCards.get(suit));
 		}
 		
 		//filtering based on card-counting
@@ -97,18 +101,25 @@ public class WinStrategy extends Strategy{
 	}
 	
 	private void leadVoidWinning(ArrayList<Card>  smartCards, Suit trump) {
+		ArrayList<Card> winningCards = new ArrayList<Card>();
+		winningCards.addAll(smartCards);
 		for(Card card: smartCards) {
 			if( card.getSuit()!= trump) {
-				smartCards.remove(card);
+				winningCards.remove(card);
 			}
 		}
+		smartCards.clear();
+		smartCards.addAll(winningCards);
 	}
 	
 	private void winningPlay(ArrayList<Card>  smartCards, ArrayList<Card> currentTrick, Suit trump, Suit lead) {
 		
 		Card maxTrickCard = currentTrick.get(0);
 		for (Card card: currentTrick) {
-			if((card.getSuit() == maxTrickCard.getSuit() && maxTrickCard.getRankId() < card.getRankId()) || card.getSuit() == trump) {
+			if((card.getSuit() == maxTrickCard.getSuit() && maxTrickCard.getRankId() > card.getRankId())) {
+				maxTrickCard = card;
+			}
+			else if(card.getSuit() == trump) {
 				maxTrickCard = card;
 			}
 		}
@@ -139,19 +150,19 @@ public class WinStrategy extends Strategy{
 		if(playedCards.isEmpty() && !mapPlayedCards.isEmpty())
 			refreshAtRoundEnd();
 		
-		if(!playedCards.isEmpty()) {//going first in first round
-			
-			System.out.println("COLD-START OFF");
+		
 			ArrayList <Card > trick = playedCards.get(playedCards.size() - 1 );
+			String trickPosition = TrickPosition(trick);
 			
-			if(initialisePlayableCards(smartCards, playableCards, lead, trump))
+			
+			if(initialisePlayableCards(smartCards, playableCards, lead, trump, trickPosition))
 				leadVoidWinning(smartCards, trump);
-			System.out.println("BREAK 1:" + smartCards.toString());
+
 
 			if(playedCards.size()==2)
 				updateLastTrick(playedCards.get(playedCards.size() - 2 ));
 			
-			switch(TrickPostion(trick)) {
+			switch(trickPosition) {
 			case "LEAD":{ guessWinningPlay(smartCards);
 							break;
 							}
@@ -165,13 +176,6 @@ public class WinStrategy extends Strategy{
 			default: //throw error (remove after testing)
 				
 			}
-			
-		}
-		else {
-			initialisePlayableCards(smartCards, playableCards, lead, trump);
-			guessWinningPlay(smartCards);
-		}
-		System.out.println("BREAK 2: " + smartCards.toString());
 		
 		if(smartCards.isEmpty())
 			return null;

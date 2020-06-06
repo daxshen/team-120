@@ -52,7 +52,7 @@ public abstract class Strategy {
 		// Find the list of allowed-to-play cards
 		ArrayList<Card> legalCards = new ArrayList<>();
 		for (Card handCard : hand) {
-			if (handCard.getSuit() == lead || handCard.getSuit() == trump)
+			if (handCard.getSuit() == lead)
 				legalCards.add(handCard);
 		}
 

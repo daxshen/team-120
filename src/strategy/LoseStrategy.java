@@ -7,11 +7,6 @@ import ch.aplu.jcardgame.Card;
 import game.Poker.Suit;
 
 public class LoseStrategy extends Strategy{
-	HashMap<Suit,Integer> suitCounter = new HashMap<>();
-	
-	public LoseStrategy() {
-		suitCounter = new HashMap<Suit,Integer>();
-	}
 	
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<ArrayList<Card>> previousTricks, Suit trump, Suit lead) {
@@ -27,6 +22,7 @@ public class LoseStrategy extends Strategy{
 					lowestCards.add(card);
 			}
 		}
+		System.out.println("Break 3: " + lowestCards.toString());
 		Card chosenCard = lowestCards.get(0);
 		for(Card card: lowestCards) {
 			if(card.getRankId() > chosenCard.getRankId()) //change
