@@ -10,7 +10,7 @@ import game.Poker.Suit;
 public class SmartStrategy extends Strategy{
 	
 	// ------------------- Attributes ----------------------
-	protected ArrayList<Strategy> strategies = new ArrayList<>();
+	private ArrayList<Strategy> strategies = new ArrayList<>();
 	
 	
 	// ------------------- Methods --------------------
