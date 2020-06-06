@@ -18,7 +18,6 @@ public class LoseStrategy extends Strategy{
 			}
 		}
 		Card chosenCard = lowestRank(lowestCards);
-		System.out.println("Break 3:" + lowestCards.toString());
 		return chosenCard;
 	}
 
