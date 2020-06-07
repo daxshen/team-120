@@ -2,7 +2,7 @@
 
 By default the game loads 'whist.properties', ( a copy of 'original.properties' )
 
-  - one interactive player : 0 / 1 ?
+  - one interactive player
   - three random NPCs
   - game settings as per the original package
  
@@ -15,7 +15,7 @@ To run with different property files, update 'whist.properties' as per  addition
   - Winning Score : 6
 
 'smart.properties'
-  - one interactive player : 0 / 1 ?
+  - one interactive player
   - one smart NPC 
   - two legal NPCs
   - game settings as per the original package
