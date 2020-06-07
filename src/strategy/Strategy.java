@@ -44,7 +44,7 @@ public abstract class Strategy {
 	 *         false - is illegal to play
 	 *         </p>
 	 */
-	public boolean isLegal(ArrayList<Card> hand, ArrayList<Card> trick, Card card, Suit trump, Suit lead) { // trick is not used
+	public boolean isLegal(ArrayList<Card> hand, ArrayList<Card> trick, Card card, Suit trump, Suit lead) {
 		// Can play any card when player is the lead or when no suitable card
 		if (lead == null)
 			return true;

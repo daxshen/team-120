@@ -14,6 +14,7 @@ public class SmartStrategy extends Strategy{
 	
 	
 	// ------------------- Methods --------------------
+	//Constructor adding strategies in order of execution
 	public SmartStrategy(){
 		addStrategy(new WinStrategy());
 		addStrategy(new LoseStrategy());
@@ -23,10 +24,10 @@ public class SmartStrategy extends Strategy{
 	}
 	@Override
 	public Card execute(ArrayList<Card> hand, ArrayList<ArrayList<Card>> previousTricks, Suit trump, Suit lead) {
+		//smartest card to play
 		Card chosenCard = null;
 		
-		
-		
+		//Iterates over all strategies until we get the smartest card to play		
 		for(Strategy strategy: strategies) {
 			chosenCard = strategy.execute(hand, previousTricks,trump,lead);
 			if(chosenCard!=null)
