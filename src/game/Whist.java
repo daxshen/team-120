@@ -50,7 +50,9 @@ public class Whist extends CardGame implements Observer {
 	private int winningScore = 11;
 	private int thinkingTime = 2000;
 	private boolean enforceRules = false;
-
+	
+	private static final String propertyFile = new String("whist.properties")
+;
 	public void setStatus(String string) {
 		setStatusText(string);
 	}
@@ -75,6 +77,7 @@ public class Whist extends CardGame implements Observer {
 	private void initialiseProperties() {
 
 		whistProperties = new Properties();
+		
 		whistProperties.setProperty("InteractivePlayer", "0");
 		whistProperties.setProperty("RandomNpc", "3");
 		whistProperties.setProperty("WinningScore", "11");
@@ -84,8 +87,6 @@ public class Whist extends CardGame implements Observer {
 
 		try {
 			readProperties();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -96,16 +97,17 @@ public class Whist extends CardGame implements Observer {
 	/**
 	 * This method reads the property file
 	 * */
-	private void readProperties() throws FileNotFoundException, IOException {
+	private void readProperties() throws IOException {
 		// Read properties
 		FileReader inStream = null;
-
-		inStream = new FileReader("debug.properties");
-		whistProperties.load(inStream);
-
-		if (inStream != null) {
-			inStream.close();
+		try {
+			inStream = new FileReader(propertyFile);
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found : " + propertyFile);
+			System.exit(0);
 		}
+		whistProperties.load(inStream);
+		inStream.close();
 	}
 
 	/**
@@ -137,7 +139,6 @@ public class Whist extends CardGame implements Observer {
 
 		removeAllActors();
 
-		setTitle("THIS IS A WIP");
 		setStatusText("Initializing...");
 
 		// initialize sprites
