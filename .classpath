@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Git Repos/WhistTest/bin/dist/lib/JGameGrid.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Git Repos/Whist/src/dist/lib/JGameGrid.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
