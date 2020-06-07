@@ -7,7 +7,7 @@ By default the game loads 'whist.properties', ( a copy of 'original.properties' 
   - game settings as per the original package
  
 
-To run with different property files, update 'whist.properties' as per  additional property files provided :
+To run with different property files, rename each file to "whist.properties":
  
 'legal.properties'
   - four legal NPCs
