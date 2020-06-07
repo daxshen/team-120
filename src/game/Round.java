@@ -14,8 +14,9 @@ import player.PlayerFactory;
 import strategy.StrategyFactory;
 
 /**
- * This class handles the gameplay logic of an entire round of Whist game, which consists of multiple tricks
- * */
+ * This class handles the gameplay logic of an entire round of Whist game, which
+ * consists of multiple tricks
+ */
 public class Round implements Subject {
 	// ------------------- Attributes --------------------
 	private int winningScore;
@@ -25,11 +26,12 @@ public class Round implements Subject {
 	private Poker.Suit lead;
 	private Card selectedCard;
 	private int numStartCards;
+	private boolean enforceRules;
 
 	private Player activePlayer;
 	private Player trickWinner;
 	private ArrayList<Player> players = new ArrayList<>();
-	
+
 	/** A list of observers that monitors the changes within{@linkplain Round} */
 	private ArrayList<Observer> observers = new ArrayList<>();
 
@@ -119,23 +121,25 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Constructors --------------------
-	/** 
+	/**
 	 * Initialises the {@linkplain Player}s and deal cards to them
+	 * 
 	 * @param numHumanPlayers the number of interactive players
 	 * @param numRandomNPCs   the number of NPCs that play only random cards
-	 * @param numLegalNPCs the number of NPCs that play random, legal cards
-	 * @param numSmartNPCs the number of smart NPCs
+	 * @param numLegalNPCs    the number of NPCs that play random, legal cards
+	 * @param numSmartNPCs    the number of smart NPCs
 	 * @param AIThinkingTime  the time it takes an NPC to play a card
-	 * @param numStartCards the number of cards in each player's hand
-	 * @param winningScore the score points to win the game
-	 * */
+	 * @param numStartCards   the number of cards in each player's hand
+	 * @param winningScore    the score points to win the game
+	 */
 	public Round(int numHumanPlayers, int numRandomNPCs, int numLegalNPCs, int numSmartNPCs, int AIThinkingTime,
-			int numStartCards, int winningScore) {
+			int numStartCards, int winningScore, boolean enforceRules) {
 
 		this.numStartCards = numStartCards;
 		this.winningScore = winningScore;
 		this.trump = Poker.randomEnum(Poker.Suit.class);
 		this.deck = new Deck(Poker.Suit.values(), Poker.Rank.values(), "cover");
+		this.enforceRules = enforceRules;
 
 		players = PlayerFactory.getInstance().generatePlayers(numHumanPlayers, numRandomNPCs, numLegalNPCs,
 				numSmartNPCs, AIThinkingTime);
@@ -143,9 +147,9 @@ public class Round implements Subject {
 	}
 
 	// ------------------- Methods --------------------------
-	 /** 
-	  * @param Deal cards to the players
-	  */
+	/**
+	 * @param Deal cards to the players
+	 */
 	public void dealCards() {
 		Hand[] hands = deck.dealingOut(players.size(), numStartCards); // Last element of hands is leftover cards; these
 																		// are
@@ -155,11 +159,13 @@ public class Round implements Subject {
 		}
 	}
 
-	 /** 
-	  * Start an round of Whist game. 
-	  * @return an {@linkplain Optional<Integer>} that contains the id of the round winner
-	  * or one that is empty if there is no winner and players are out of cards
-	  */
+	/**
+	 * Start an round of Whist game.
+	 * 
+	 * @return an {@linkplain Optional<Integer>} that contains the id of the round
+	 *         winner or one that is empty if there is no winner and players are out
+	 *         of cards
+	 */
 	public Optional<Integer> playRound() {
 		Integer roundWinner = null;
 
@@ -174,7 +180,7 @@ public class Round implements Subject {
 			lead = null;
 			trickWinner = null;
 			trick = new Hand(deck);
-			
+
 			// Each player plays a card
 			System.out.println(" Trump: " + trump.toString());
 			for (Player player : players) {
@@ -195,18 +201,22 @@ public class Round implements Subject {
 					lead = (Poker.Suit) selectedCard.getSuit();
 
 				// Check: Following card must follow suit if possible
-				boolean isLegal = StrategyFactory.getInstance().getStrategy("DEFAULT").
-						isLegal(activePlayer.getHand().getCardList(), trick.getCardList(), selectedCard, trump, lead);
+				boolean isLegal = StrategyFactory.getInstance().getStrategy("DEFAULT")
+						.isLegal(activePlayer.getHand().getCardList(), trick.getCardList(), selectedCard, trump, lead);
 				if (!isLegal) {
 					// Rule violation
 					String violation = "Follow rule broken by player " + activePlayer.getId() + " attempting to play "
 							+ selectedCard;
 					System.out.println(violation);
-					/*
-					 * if (enforceRules) try { throw (new BrokeRuleException(violation)); } catch
-					 * (BrokeRuleException e) { e.printStackTrace();
-					 * System.out.println("A cheating player spoiled the game!"); System.exit(0); }
-					 */
+
+					if (enforceRules)
+						try {
+							throw (new BrokeRuleException(violation));
+						} catch (BrokeRuleException e) {
+							e.printStackTrace();
+							System.out.println("A cheating player spoiled the game!");
+							System.exit(0);
+						}
 				}
 
 				// Draw card graphics
@@ -215,8 +225,8 @@ public class Round implements Subject {
 			}
 
 			// Calculate result
-			Card winningCard = StrategyFactory.getInstance().getStrategy("DEFAULT").
-					winningCard(trick.getCardList(), lead, trump);
+			Card winningCard = StrategyFactory.getInstance().getStrategy("DEFAULT").winningCard(trick.getCardList(),
+					lead, trump);
 			trickWinner = trickWinner(players, winningCard);
 
 			if (trickWinner != null) {
@@ -242,12 +252,13 @@ public class Round implements Subject {
 		return Optional.empty();
 	}
 
-	 /** 
-	  * Determines the trick winner
-	  * @param players all players in the game
-	  * @param winningCard the card that won the trick
-	  * @return the {@linkplain Player} that won the trick
-	  */
+	/**
+	 * Determines the trick winner
+	 * 
+	 * @param players     all players in the game
+	 * @param winningCard the card that won the trick
+	 * @return the {@linkplain Player} that won the trick
+	 */
 	private Player trickWinner(ArrayList<Player> players, Card winningCard) {
 		Player trickWinner = null;
 		for (Player player : players) {
@@ -256,15 +267,19 @@ public class Round implements Subject {
 		}
 		return trickWinner;
 	}
-	
+
 	// ------------------- Utility Methods --------------------------
-	 /** 
-	  * Shift all elements of an {@linkplain ArrayList}. 
-	  * <p>Elements that reached the end of the ArrayList will jump to the start</p>
-	  * @param list the original ArrayList
-	  * @param index the index of the element that needs to be at the start after shifting
-	  * @return the shifted ArrayList
-	  */
+	/**
+	 * Shift all elements of an {@linkplain ArrayList}.
+	 * <p>
+	 * Elements that reached the end of the ArrayList will jump to the start
+	 * </p>
+	 * 
+	 * @param list  the original ArrayList
+	 * @param index the index of the element that needs to be at the start after
+	 *              shifting
+	 * @return the shifted ArrayList
+	 */
 	private <T> ArrayList<T> shiftArray(ArrayList<T> list, int index) {
 
 		// Do nothing if element is already the first
@@ -290,7 +305,7 @@ public class Round implements Subject {
 		}
 		return newList;
 	}
-	
+
 	// ------------------- Interface Methods --------------------------
 	// Observer pattern
 	@Override

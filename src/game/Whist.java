@@ -41,18 +41,7 @@ public class Whist extends CardGame implements Observer {
 	private Location hideLocation = new Location(-500, -500);
 	private Location trumpsActorLocation = new Location(50, 50);
 
-	/* Game properties */
-	private int nbStartCards = 13;
-	private int numHumanPlayers = 1;
-	private int numRandomNPCs = 4;
-	private int numLegalNPCs = 0;
-	private int numSmartNPCs = 0;
-	private int winningScore = 11;
-	private int thinkingTime = 2000;
-	private boolean enforceRules = false;
-	
-	private static final String propertyFile = new String("whist.properties")
-;
+	private static final String propertyFile = new String("whist.properties");
 	public void setStatus(String string) {
 		setStatusText(string);
 	}
@@ -114,14 +103,14 @@ public class Whist extends CardGame implements Observer {
 	 * This method converts the property file to attributes
 	 * */
 	private void loadProperties() {
-		numHumanPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayers"));
-		numRandomNPCs = Integer.parseInt(whistProperties.getProperty("RandomNPCs"));
-		numLegalNPCs = Integer.parseInt(whistProperties.getProperty("LegalNPCs"));
-		numSmartNPCs = Integer.parseInt(whistProperties.getProperty("SmartNPCs"));
-		winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
-		nbStartCards = Integer.parseInt(whistProperties.getProperty("StartingCards"));
-		thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
-		enforceRules = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
+		int numHumanPlayers = Integer.parseInt(whistProperties.getProperty("InteractivePlayers"));
+		int numRandomNPCs = Integer.parseInt(whistProperties.getProperty("RandomNPCs"));
+		int numLegalNPCs = Integer.parseInt(whistProperties.getProperty("LegalNPCs"));
+		int numSmartNPCs = Integer.parseInt(whistProperties.getProperty("SmartNPCs"));
+		int winningScore = Integer.parseInt(whistProperties.getProperty("WinningScore"));
+		int nbStartCards = Integer.parseInt(whistProperties.getProperty("StartingCards"));
+		int thinkingTime = Integer.parseInt(whistProperties.getProperty("ThinkingTime"));
+		boolean enforceRules = Boolean.parseBoolean(whistProperties.getProperty("EnforceRules"));
 
 		System.out.println("------------ Game Properties ------------");
 		System.out.println("nbPlayers    : " + numRandomNPCs);
@@ -129,6 +118,17 @@ public class Whist extends CardGame implements Observer {
 		System.out.println("thinkingTime : " + thinkingTime);
 		System.out.println("enforceRules : " + enforceRules);
 		System.out.println("-----------------------------------------");
+		
+		round = new Round(
+				numHumanPlayers, 
+				numRandomNPCs, 
+				numLegalNPCs, 
+				numSmartNPCs, 
+				thinkingTime, 
+				nbStartCards, 
+				winningScore,
+				enforceRules);
+		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
 	}
 
 	//-------------------------------Graphics------------------------------------
@@ -223,17 +223,6 @@ public class Whist extends CardGame implements Observer {
 		super(700, 700, 30);
 
 		initialiseProperties();
-
-		round = new Round(
-				numHumanPlayers, 
-				numRandomNPCs, 
-				numLegalNPCs, 
-				numSmartNPCs, 
-				thinkingTime, 
-				nbStartCards, 
-				winningScore);
-		round.addObserver((observer.Observer) this); // Register as an observer to update graphics
-
 		Optional<Integer> winner;
 		do {
 			initGraphics();
