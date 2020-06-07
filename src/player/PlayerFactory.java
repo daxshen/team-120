@@ -40,6 +40,10 @@ public class PlayerFactory {
 			players.add(getPlayer(i, AIThinkingTime, "HUMAN"));
 		}
 
+		for (int i = 0; i < numSmartNPCs; i++) {
+			players.add(getPlayer(players.size(), AIThinkingTime, "SMART"));
+		}
+		
 		for (int i = 0; i < numRandomNPCs; i++) {
 			players.add(getPlayer(players.size(), AIThinkingTime, "RANDOM"));
 		}
@@ -48,9 +52,6 @@ public class PlayerFactory {
 			players.add(getPlayer(players.size(), AIThinkingTime, "LEGAL"));
 		}
 
-		for (int i = 0; i < numSmartNPCs; i++) {
-			players.add(getPlayer(players.size(), AIThinkingTime, "SMART"));
-		}
 		return players;
 	}
 
